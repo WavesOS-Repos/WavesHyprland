@@ -1,29 +1,38 @@
 return {
-	{
-		"rcarriga/nvim-notify",
-		config = function()
-			-- Set nvim-notify as the default notification handler
-			vim.notify = require("notify")
+    "rcarriga/nvim-notify",
+    lazy = false,
+    config = function()
+        local notify = require("notify")
 
-			-- Optional: Configure nvim-notify
-			require("notify").setup({
-				stages = "fade_in_slide_out", -- Animation style
-				timeout = 3000, -- Notification timeout in ms
-				background_colour = "#000000", -- Background color
-				max_width = 50, -- Set a fixed max width (adjust as needed)
-				max_height = 10, -- Optional: Set max height
-				-- render = "minimal", -- Optional: Use a compact notification style
-				icons = {
-					ERROR = "",
-					WARN = "",
-					INFO = "",
-					DEBUG = "",
-					TRACE = "✎",
-				},
-			})
+        notify.setup({
+            stages = "fade",
 
-			-- Example: Test nvim-notify
-			-- vim.notify("nvim-notify is installed!", "info", { title = "Success" })
-		end,
-	},
+            timeout = 2000,
+
+            -- 🔥 Make it smaller
+            max_width = 40, -- reduce width
+            max_height = 3, -- reduce height
+
+            render = "compact",
+
+            -- 🔥 Bottom-right placement
+            top_down = false,
+
+            background_colour = "#1e222a",
+
+            icons = {
+                ERROR = "",
+                WARN  = "",
+                INFO  = "",
+                DEBUG = "",
+                TRACE = "✎",
+            },
+        })
+
+        vim.notify = notify
+    end,
+
+    vim.keymap.set("n", "<leader>j", function()
+        require("notify").dismiss({ silent = true })
+    end, { desc = "Dismiss notifications" })
 }

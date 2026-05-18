@@ -1,92 +1,124 @@
 #!/bin/bash
+# WallpaperSelect.sh — Select a wallpaper via rofi and apply it.
 
 scripts_dir="$HOME/.config/hypr/scripts"
 wallDIR="$HOME/.config/hypr/Wallpaper"
 cache_dir="$HOME/.config/hypr/.cache"
-themes_dir="$HOME/.config/hypr/.cache/colors"
 wallCache="$cache_dir/.wallpaper"
-engine_file="$cache_dir/.engine"
-engine=$(cat "$engine_file")
 
 [[ ! -f "$wallCache" ]] && touch "$wallCache"
 
+# Detect wallpaper engine
+if command -v awww >/dev/null 2>&1; then
+    ENGINE="awww"
+elif command -v swww >/dev/null 2>&1; then
+    ENGINE="swww"
+else
+    notify-send "Wallpaper Error" "Neither awww nor swww is installed."
+    exit 1
+fi
+
 # Transition config
-FPS=60
-TYPE="random"
+FPS=120
+TYPE="any"
 DURATION=1
-BEZIER=".43,1.19,1,.4"
-SWWW_PARAMS="--transition-fps $FPS --transition-type $TYPE --transition-duration $DURATION"
+BEZIER=".28,.58,.99,.37"
 
+AWWW_PARAMS="--transition-fps $FPS --transition-type $TYPE --transition-duration $DURATION --transition-bezier $BEZIER"
 
-# Retrieve image files
-PICS=($(ls "${wallDIR}" | grep -E ".jpg$|.jpeg$|.png$|.gif$"))
-RANDOM_PIC="${PICS[$((RANDOM % ${#PICS[@]}))]}"
+# Safely retrieve image files
+mapfile -d '' _PICS_FULL < <(
+    find "$wallDIR" -maxdepth 1 -type f \
+    \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" \) -print0
+)
+
+# Exit if no wallpapers found
+[[ ${#_PICS_FULL[@]} -eq 0 ]] && exit 1
+
+# Build basename-only array
+PICS=()
+for p in "${_PICS_FULL[@]}"; do
+    PICS+=("$(basename "$p")")
+done
+
+RANDOM_PIC="${_PICS_FULL[RANDOM % ${#_PICS_FULL[@]}]}"
 RANDOM_PIC_NAME="${#PICS[@]}. random"
 
-# Rofi command ( style )
+# Rofi commands
 rofi_command1="rofi -show -dmenu -config ~/.config/rofi/themes/rofi-wall.rasi"
 rofi_command2="rofi -show -dmenu -config ~/.config/rofi/themes/rofi-wall-2.rasi"
 
 menu() {
-  for i in "${!PICS[@]}"; do
-    # Displaying .gif to indicate animated images
-    if [[ -z $(echo "${PICS[$i]}" | grep .gif$) ]]; then
-      printf "$(echo "${PICS[$i]}" | cut -d. -f1)\x00icon\x1f${wallDIR}/${PICS[$i]}\n"
-    else
-      printf "${PICS[$i]}\n"
-    fi
-  done
+    for i in "${!PICS[@]}"; do
+        name="${PICS[$i]}"
+        full="${_PICS_FULL[$i]}"
 
-  printf "$RANDOM_PIC_NAME\n"
+        if [[ "$name" != *.gif ]]; then
+            printf "%s\x00icon\x1f%s\n" "${name%.*}" "$full"
+        else
+            printf "%s\n" "$name"
+        fi
+    done
+
+    printf "%s\n" "$RANDOM_PIC_NAME"
 }
 
 case $1 in
-    thm1)
-        choice=$(menu | ${rofi_command1})
-        ;;
-    thm2)
-        choice=$(menu | ${rofi_command2})
-        ;;
+    thm1) choice=$(menu | ${rofi_command1}) ;;
+    thm2) choice=$(menu | ${rofi_command2}) ;;
+    *) choice=$(menu | ${rofi_command1}) ;;
 esac
 
-swww-daemon &
+# No choice → exit
+[[ -z "$choice" ]] && exit 0
 
-# No choice case
-if [[ -z $choice ]]; then
-  exit 0
-fi
+# Start daemon if needed
+start_daemon() {
+    if ! pgrep -x ${ENGINE}-daemon >/dev/null; then
+        ${ENGINE}-daemon &>/dev/null &
+        disown
+        sleep 0.5
+    fi
+}
 
-# Random choice case
-if [ "$choice" = "$RANDOM_PIC_NAME" ]; then
-  swww img "${wallDIR}/${RANDOM_PIC}" $SWWW_PARAMS
-  exit 0
-fi
+# Apply wallpaper
+set_wallpaper() {
+    local img="$1"
+    ${ENGINE} img "$img" $AWWW_PARAMS
 
-# Find the index of the selected file
-pic_index=-1
-for i in "${!PICS[@]}"; do
-  filename=$(basename "${PICS[$i]}")
-  if [[ "$filename" == "$choice"* ]]; then
-    pic_index=$i
-    break
-  fi
-done
+    ln -sf "$img" "$cache_dir/current_wallpaper.png"
 
-if [[ $pic_index -ne -1 ]]; then
-    # notify-send -i "${wallDIR}/${PICS[$pic_index]}" "Changing wallpaper" -t 1500
-    swww img "${wallDIR}/${PICS[$pic_index]}" $SWWW_PARAMS
+    baseName="$(basename "$img")"
+    wallName="${baseName%.*}"
 
-    ln -sf "${wallDIR}/${PICS[$pic_index]}" "$cache_dir/current_wallpaper.png"
-    basename="$(basename "${wallDIR}/${PICS[$pic_index]}")"
-    wallName="${basename%.*}"
     echo "$wallName" > "$wallCache"
-    # wal -q -e -i "${wallDIR}/${PICS[$pic_index]}" || printf "\n\nCouls not generate any colors\n"
+}
 
+start_daemon
+
+# Random choice
+if [[ "$choice" == "$RANDOM_PIC_NAME" ]]; then
+    set_wallpaper "$RANDOM_PIC"
 else
-    echo "Image not found."
-    exit 1
+    # Match by stem
+    selected_full=""
+
+    for i in "${!PICS[@]}"; do
+        stem="${PICS[$i]%.*}"
+
+        if [[ "$stem" == "$choice" ]]; then
+            selected_full="${_PICS_FULL[$i]}"
+            break
+        fi
+    done
+
+    if [[ -z "$selected_full" ]]; then
+        notify-send "Wallpaper Error" "Image not found."
+        exit 1
+    fi
+
+    set_wallpaper "$selected_full"
 fi
 
-sleep 0.5
-"$scripts_dir/wallcache.sh"
+"$scripts_dir/wallcache.sh" &
 "$scripts_dir/pywal.sh"

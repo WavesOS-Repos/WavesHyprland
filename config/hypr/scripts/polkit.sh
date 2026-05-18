@@ -12,15 +12,16 @@ polkit=(
     "/usr/libexec/polkit-mate-authentication-agent-1"
     "/usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1"
     "/usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1"
+    "/usr/lib/xfce-polkit/xfce-polkit"
+    "/usr/libexec/xfce-polkit"
 )
 
-executed=false  # Flag to track if a file has been executed
-
-# Loop through the list of files
+# Launch the first polkit agent found; exec replaces this shell process
 for file in "${polkit[@]}"; do
-  if [ -e "$file" ]; then
-    exec "$file"  
-    executed=true
-    break
-  fi
+    if [[ -x "$file" ]]; then
+        exec "$file"
+    fi
 done
+
+echo "[polkit.sh] Warning: No polkit authentication agent found!" >&2
+exit 1

@@ -10,7 +10,6 @@ EOF
 
 # Script for setting window border width and roundness.
 setting="$HOME/.config/hypr/configs/configs.conf"
-dunst="$HOME/.config/dunst/dunstrc"
 rofiVars="$HOME/.config/rofi/rofi-vars.rasi"
 
 
@@ -20,9 +19,9 @@ printf "\n  => Choose which settings you want to change\n  -> Need to select usi
 echo
 _hyprland_choice=$(gum choose \
     --header "Select settings:" \
-    --header.foreground "#c3cbd0" \
+    --header.foreground "#bdb0ca" \
     --no-limit \
-    --cursor.foreground "#c3cbd0" \
+    --cursor.foreground "#bdb0ca" \
     "border size" \
     "roundness" \
     "inner gap" \
@@ -53,7 +52,6 @@ for user_choice in "${primary_choice[@]}"; do
             borderSize=$(gum input --placeholder "Type border width...")
         done
         sed -i "s/\$border = .*/\\\$border = $borderSize/g" "$setting"
-        sed -i "s/frame_width = .*/frame_width = $borderSize/g" "$dunst"
         sed -i "s/border-size: .*/border-size: ${borderSize}px;/g" "$rofiVars"
         ;;
     "roundness")
@@ -64,7 +62,6 @@ for user_choice in "${primary_choice[@]}"; do
             rounding=$(gum input --placeholder "Type border roundness...")
         done
         sed -i 's/\$rounding = .*/$rounding = '"$rounding"'/g' "$setting"
-        sed -i "s/^[[:space:]]*corner_radius[[:space:]]*= .*/corner_radius = $((rounding / 2))/g" "$dunst"
         sed -i "s/radius: .*/radius: ${rounding}px;/g" "$rofiVars"
         sed -i "s/radius-second: .*/radius-second: $((rounding / 2))px;/g" "$rofiVars"
         ;;
@@ -99,7 +96,7 @@ for user_choice in "${primary_choice[@]}"; do
             _blur_passes=$(gum input --placeholder "Type the amount of blur passes...")
         done
         sed -i "s/\$blur_size = .*/\\\$blur_size = $_blur_size/g" "$setting"
-        sed -i "s/\$blur_passes = .*/\\\$blur_passes = $_blur_passes/g" "$setting"
+        sed -i "s/\$blur_pass = .*/\\\$blur_pass = $_blur_passes/g" "$setting"
         ;;
     "opacity")
         printf "\n[ <> ]\nSetting opacity...\n\n"
@@ -133,5 +130,4 @@ done
 
 # Reload Hyprland
 printf "\n[ ** ] Reloading Hyprland configuration...\n" && sleep 1
-killall dunst
 hyprctl reload

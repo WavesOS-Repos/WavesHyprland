@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Exit cleanly when the reader (e.g. waybar) closes the pipe
+trap 'exit 0' SIGPIPE
+
 SOUND_FILE_UPDATE="$HOME/.config/hypr/sounds/update.wav"
 SOUND_FILE_ERROR="$HOME/.config/hypr/sounds/error.wav"
 update_sign="$HOME/.config/hypr/icons/update.png"

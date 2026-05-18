@@ -1,32 +1,70 @@
 #!/bin/bash
+# Wallpaper.sh — Pick a random wallpaper and apply it.
 
 scripts_dir="$HOME/.config/hypr/scripts"
-themes_dir="$HOME/.config/hypr/.cache/colors"
 cache_dir="$HOME/.config/hypr/.cache"
 wallCache="$cache_dir/.wallpaper"
 wallpaper_dir="$HOME/.config/hypr/Wallpaper"
 
 [[ ! -f "$wallCache" ]] && touch "$wallCache"
 
-PICS=($(find ${wallpaper_dir} -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.gif" \)))
-wallpaper=${PICS[ $RANDOM % ${#PICS[@]} ]}
+# Detect wallpaper engine
+if command -v awww >/dev/null 2>&1; then
+    ENGINE="awww"
+elif command -v swww >/dev/null 2>&1; then
+    ENGINE="swww"
+else
+    notify-send "Wallpaper Error" "Neither awww nor swww is installed."
+    exit 1
+fi
+
+# Use mapfile+find to correctly handle filenames with spaces
+mapfile -d '' PICS < <(
+    find "$wallpaper_dir" -maxdepth 1 -type f \
+    \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" \) -print0
+)
+
+# No wallpapers found
+if [[ ${#PICS[@]} -eq 0 ]]; then
+    notify-send "Wallpaper Error" "No wallpapers found in $wallpaper_dir"
+    exit 1
+fi
+
+wallpaper="${PICS[RANDOM % ${#PICS[@]}]}"
 
 # Transition config
-FPS=60
-TYPE="random"
+FPS=120
+TYPE="any"
 DURATION=1
-BEZIER=".43,1.19,1,.4"
-SWWW_PARAMS="--transition-fps $FPS --transition-type $TYPE --transition-duration $DURATION --transition-bezier $BEZIER"
+BEZIER=".28,.58,.99,.37"
 
-swww-daemon &
-swww img ${wallpaper} $SWWW_PARAMS
+AWWW_PARAMS="--transition-fps $FPS --transition-type $TYPE --transition-duration $DURATION --transition-bezier $BEZIER"
 
-ln -sf "$wallpaper" "$cache_dir/current_wallpaper.png"
+# Start daemon if needed
+start_daemon() {
+    if ! pgrep -x "${ENGINE}-daemon" >/dev/null; then
+        ${ENGINE}-daemon &>/dev/null &
+        disown
+        sleep 0.5
+    fi
+}
 
-baseName="$(basename $wallpaper)"
-wallName=${baseName%.*}
-echo "$wallName" > "$wallCache"
+# Apply wallpaper
+set_wallpaper() {
+    local img="$1"
 
-sleep 0.5
-"$scripts_dir/wallcache.sh"
+    ${ENGINE} img "$img" $AWWW_PARAMS
+
+    ln -sf "$img" "$cache_dir/current_wallpaper.png"
+
+    baseName="$(basename "$img")"
+    wallName="${baseName%.*}"
+
+    echo "$wallName" > "$wallCache"
+}
+
+start_daemon
+set_wallpaper "$wallpaper"
+
+"$scripts_dir/wallcache.sh" &
 "$scripts_dir/pywal.sh"

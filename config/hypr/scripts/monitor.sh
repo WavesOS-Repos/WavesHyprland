@@ -1,7 +1,7 @@
 #!/bin/bash
 
 config_file="$HOME/.config/hypr/configs/monitor.conf"
-auto_generated_setting=$(cat $config_file | grep "monitor=,preferred,auto,auto")
+auto_generated_setting=$(cat $config_file | grep "monitor=,preferred, auto, 1")
 
 display() {
     cat << "EOF"
@@ -17,8 +17,8 @@ if [[ "$auto_generated_setting" ]]; then
 
     gum spin \
         --spinner minidot \
-        --spinner.foreground "#c3cbd0" \
-        --title.foreground "#c3cbd0" \
+        --spinner.foreground "#bdb0ca" \
+        --title.foreground "#bdb0ca" \
         --title "Setting up for your Monitor" -- \
         sleep 2
 
@@ -29,9 +29,9 @@ if [[ "$auto_generated_setting" ]]; then
     refresh_rate=$(gum choose \
                     --header \
                     "󰍹 Choose the refresh rate for your '$monitor_name' monitor:" \
-                    --header.foreground "#c3cbd0" \
-                    --selected.foreground "#c3cbd0" \
-                    --cursor.foreground "#c3cbd0" \
+                    --header.foreground "#bdb0ca" \
+                    --selected.foreground "#bdb0ca" \
+                    --cursor.foreground "#bdb0ca" \
                     "60Hz" "75Hz" "120Hz" "144Hz" "165Hz" "180Hz" "200Hz" "240Hz"
                 )
 

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# WavesOS
-
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -22,22 +20,24 @@ display_text() {
         --margin "1" \
         --padding "1" \
 '
-  __  __        __     __        __ __                            ___
- / / / /__  ___/ /__ _/ /____   / // /_ _____  ___________  ___  / _/
-/ /_/ / _ \/ _  / _ `/ __/ -_) / _  / // / _ \/ __/ __/ _ \/ _ \/ _/ 
-\____/ .__/\_,_/\_,_/\__/\__/ /_//_/\_, / .__/_/  \__/\___/_//_/_/   
-    /_/                            /___/_/                           
+   __  __          __      __           
+  / / / /___  ____/ /___ _/ /____  _____
+ / / / / __ \/ __  / __ `/ __/ _ \/ ___/
+/ /_/ / /_/ / /_/ / /_/ / /_/  __/ /    
+\____/ .___/\__,_/\__,_/\__/\___/_/     
+    /_/                                 
 '
 }
 
 else
 display_text() {
     cat << "EOF"
-  __  __        __     __        __ __                            ___
- / / / /__  ___/ /__ _/ /____   / // /_ _____  ___________  ___  / _/
-/ /_/ / _ \/ _  / _ `/ __/ -_) / _  / // / _ \/ __/ __/ _ \/ _ \/ _/ 
-\____/ .__/\_,_/\_,_/\__/\__/ /_//_/\_, / .__/_/  \__/\___/_//_/_/   
-    /_/                            /___/_/                             
+    __  __          __      __           
+  / / / /___  ____/ /___ _/ /____  _____
+ / / / / __ \/ __  / __ `/ __/ _ \/ ___/
+/ /_/ / /_/ / /_/ / /_/ / /_/  __/ /    
+\____/ .___/\__,_/\__,_/\__/\___/_/     
+    /_/                                 
 
 EOF
 }
@@ -58,8 +58,8 @@ touch "$log"
 
 sleep 1
 
-printf "${green}=>${end} Cloning WavesOS repository\n"
-git clone --depth=1 https://github.com/taranverma-India/WavesHyprland.git "$HOME/.cache/hyprconf" &> /dev/null
+printf "${green}=>${end} Cloning hyprconf repository\n"
+git clone --depth=1 https://github.com/WavesOS-Repos/WavesHyprland.git "$HOME/.cache/hyprconf" &> /dev/null
 
 if [[ -d "$HOME/.cache/hyprconf" ]]; then
     cd "$HOME/.cache/hyprconf"

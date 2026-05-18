@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#WavesOS
+# Advanced Hyprland Installation Script
 
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
 yellow="\e[1;33m"
 blue="\e[1;34m"
-megenta="\e[1;1;35m"
+magenta="\e[1;1;35m"
 cyan="\e[1;36m"
 orange="\x1b[38;5;214m"
 end="\e[1;0m"
@@ -22,23 +22,21 @@ display_text() {
         --margin "1" \
         --padding "1" \
 '
-   __ __                            ___
-  / // /_ _____  ___________  ___  / _/
- / _  / // / _ \/ __/ __/ _ \/ _ \/ _/ 
-/_//_/\_, / .__/_/  \__/\___/_//_/_/   
-     /___/_/                                
-'
+   __ __              __             __
+  / // /_ _____  ____/ /__ ____  ___/ /
+ / _  / // / _ \/ __/ / _ `/ _ \/ _  / 
+/_//_/\_, / .__/_/ /_/\_,_/_//_/\_,_/  
+     /___/_/                           
 }
 
 else
 display_text() {
     cat << "EOF"
-   __ __                            ___
-  / // /_ _____  ___________  ___  / _/
- / _  / // / _ \/ __/ __/ _ \/ _ \/ _/ 
-/_//_/\_, / .__/_/  \__/\___/_//_/_/   
-     /___/_/                              
-
+   __ __              __             __
+  / // /_ _____  ____/ /__ ____  ___/ /
+ / _  / // / _ \/ __/ / _ `/ _ \/ _  / 
+/_//_/\_, / .__/_/ /_/\_,_/_//_/\_,_/  
+     /___/_/                           
 EOF
 }
 fi
@@ -92,11 +90,11 @@ msg() {
 
 
 # Directories ----------------------------
-hypr_dir="$HOME/.config/hypr"
+hypr_dir="$HOME/.hyprconf/hypr"
 scripts_dir="$hypr_dir/scripts"
 fonts_dir="$HOME/.local/share/fonts"
 
-msg act "Now setting up the pre installed Hyprland configuration..."sleep 1
+msg act "Now setting up the pre installed Hyprland configuration..." && sleep 1
 
 mkdir -p ~/.config
 dirs=(
@@ -108,28 +106,32 @@ dirs=(
     hypr
     kitty
     Kvantum
+    menus
     nvim
     nwg-look
     qt5ct
     qt6ct
     rofi
+    satty
     swaync
     waybar
+    wlogout
     xfce4
     xsettingsd
     yazi
+    dolphinrc
+    kwalletmanagerrc
+    kwalletrc
 )
 
 # Paths
 backup_dir="$HOME/.temp-back"
-keybinds_backup="$backup_dir/keybinds.conf"
-wrules_backup="$backup_dir/wrules.conf"
 wallpapers_backup="$backup_dir/Wallpaper"
 hypr_cache_backup="$backup_dir/.cache"
-keybinds="$HOME/.config/hypr/configs/keybinds.conf"
-wrules="$HOME/.config/hypr/configs/wrules.conf"
-wallpapers="$HOME/.config/hypr/Wallpaper"
-hypr_cache="$HOME/.config/hypr/.cache"
+hypr_config_backup="$backup_dir/configs.conf"
+wallpapers="$HOME/.hyprconf/hypr/Wallpaper"
+hypr_cache="$HOME/.hyprconf/hypr/.cache"
+hypr_config="$HOME/.hyprconf/hypr/configs/configs.conf"
 
 # Ensure backup directory exists
 mkdir -p "$backup_dir"
@@ -140,6 +142,7 @@ backup_or_restore() {
     local file_type="$2"
 
     if [[ -e "$file_path" ]]; then
+        echo
         msg att "A $file_type has been found."
         if command -v gum &> /dev/null; then
             gum confirm "Would you Restore it or put it into the Backup?" \
@@ -148,17 +151,17 @@ backup_or_restore() {
             echo
 
             if [[ $? -eq 0 ]]; then
-                action="y"
+                action="r"
             else
-                action="n"
+                action="b"
             fi
 
         else
-            msg ask "Would you Restore it or put it into the Backup? [ y/n ]"
+            msg ask "Would you like to Restore it or put it into the Backup? [ r/b ]"
             read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" action
         fi
 
-        if [[ "$action" =~ ^[Yy]$ ]]; then
+        if [[ "$action" =~ ^[Rr]$ ]]; then
             cp -r "$file_path" "$backup_dir/"
         else
             msg att "$file_type will be backed up..."
@@ -166,59 +169,47 @@ backup_or_restore() {
     fi
 }
 
-# Backing up keybinds, wrules, and wallpapers
-backup_or_restore "$keybinds" "keybinds config file"
-backup_or_restore "$wrules" "window rules config file"
+# Backing wallpapers
 backup_or_restore "$wallpapers" "wallpaper directory"
+backup_or_restore "$hypr_config" "hyprland config file"
+
 [[ -e "$hypr_cache" ]] && cp -r "$hypr_cache" "$backup_dir/"
 
 # if some main directories exists, backing them up.
-if [[ -d "$HOME/.config/backup_hyprconf-${USER}" ]]; then
-    msg att "a backup_hyprconf-${USER} directory was there. Archiving it..."
-    cd "$HOME/.config"
-    mkdir -p "archive_hyprconf-${USER}"
-    tar -czf "archive_hyprconf-${USER}/backup_hyprconf-$(date +%d-%m-%Y_%I-%M-%p)-${USER}.tar.gz" "backup_hyprconf-${USER}" &> /dev/null
+if [[ -d "$HOME/.backup_hyprconf-${USER}" ]]; then
+    msg att "a .backup_hyprconf-${USER} directory was there. Archiving it..."
+    cd
+    mkdir -p ".archive_hyprconf-${USER}"
+    tar -czf ".archive_hyprconf-${USER}/backup_hyprconf-$(date +%d-%m-%Y_%I-%M-%p)-${USER}.tar.gz" ".backup_hyprconf-${USER}" &> /dev/null
     # mv "HyprBackup-${USER}.zip" "HyprArchive-${USER}/"
-    rm -rf "backup_hyprconf-${USER}"
-    msg dn "backup_hyprconf-${USER} was archived inside archive_hyprconf-${USER} directory..." && sleep 1
+    rm -rf ".backup_hyprconf-${USER}"
+    msg dn "~/.backup_hyprconf-${USER} was archived inside ~/.archive_hyprconf-${USER} directory..." && sleep 1
 fi
 
-for confs in "${dirs[@]}"; do
-    mkdir -p "$HOME/.config/backup_hyprconf-${USER}"
-    dir_path="$HOME/.config/$confs"
-    if [[ -d "$dir_path" ]]; then
-        mv "$dir_path" "$HOME/.config/backup_hyprconf-${USER}/" 2>&1 | tee -a "$log"
-    fi
-done
 
-[[ -d "$HOME/.config/backup_hyprconf-${USER}/hypr" ]] && msg dn "Everything has been backuped in $HOME/.config/backup_hyprconf-${USER}..."
+mkdir -p "$HOME/.backup_hyprconf-${USER}"
+if [[ -d "$HOME/.hyprconf" ]]; then
+
+    mv "$HOME/.hyprconf" "$HOME/.backup_hyprconf-${USER}/"
+
+else
+
+    for confs in "${dirs[@]}"; do
+        conf_path="$HOME/.config/$confs"
+
+        # If the config exists and is NOT a symlink → backup it
+        if [[ -e "$conf_path" && ! -L "$conf_path" ]]; then
+            mv "$conf_path" "$HOME/.backup_hyprconf-${USER}/" 2>&1 | tee -a "$log"
+        fi
+    done
+    
+    msg dn "Backed up $confs config to ~/.backup_hyprconf-${USER}/"
+fi
+
+[[ -d "$HOME/.backup_hyprconf-${USER}/hypr" ]] && msg dn "Everything has been backuped in $HOME/.backup_hyprconf-${USER}..."
 
 sleep 1
 
-####################################################################
-
-#_____ if OpenBangla Keyboard is installed
-# keyboard_path="/usr/share/openbangla-keyboard"
-#
-# if [[ -d "$keyboard_path" ]]; then
-#     msg act "Setting up OpenBangla-Keyboard..."
-#
-#     # Add fcitx5 environment variables to /etc/environment if not already present
-#     if ! grep -q "GTK_IM_MODULE=fcitx" /etc/environment; then
-#         printf "\nGTK_IM_MODULE=fcitx\n" | sudo tee -a /etc/environment 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log") &> /dev/null
-#     fi
-#
-#     if ! grep -q "QT_IM_MODULE=fcitx" /etc/environment; then
-#         printf "QT_IM_MODULE=fcitx\n" | sudo tee -a /etc/environment 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log") &> /dev/null
-#     fi
-#
-#     if ! grep -q "XMODIFIERS=@im=fcitx" /etc/environment; then
-#         printf "XMODIFIERS=@im=fcitx\n" | sudo tee -a /etc/environment 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log") &> /dev/null
-#     fi
-#
-# fi
-
-####################################################################
 
 #_____ for virtual machine
 # Check if the configuration is in a virtual box
@@ -228,15 +219,10 @@ if hostnamectl | grep -q 'Chassis: vm'; then
     sed -i '/env = WLR_NO_HARDWARE_CURSORS,1/s/^#//' "$dir/config/hypr/configs/environment.conf"
     sed -i '/env = WLR_RENDERER_ALLOW_SOFTWARE,1/s/^#//' "$dir/config/hypr/configs/environment.conf"
     echo -e '#Monitor\nmonitor=Virtual-1, 1920x1080@60,auto,1' > "$dir/config/hypr/configs/monitor.conf"
-
-else
-    #_____ setting up the monitor
-    msg act "Setting the high resolution and maximum refresh rate for your monitor..."
-    echo -e "#Monitor\nmonitor=,highres,auto,1\nmonitor=,highrr,auto,1" > "$dir/config/hypr/configs/monitor.conf"
 fi
 
 
-#_____ for nvidia gpu. I don't know if it's gonna work or not. Because I don't have any gpu.
+#_____ for nvidia gpu. I don't know if it's gonna work or not.
 # uncommenting WLR_NO_HARDWARE_CURSORS if nvidia is detected
 if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
   msg act "Nvidia GPU detected. Setting up proper env's" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log") || true
@@ -247,16 +233,24 @@ fi
 
 sleep 1
 
-# cloning the dotfiles repository into ~/.config/hypr
-cp -r "$dir/config"/* "$HOME/.config/" && sleep 0.5
-[[ ! -d "$HOME/.local/share/fastfetch/" ]] && mv "$HOME/.config/fastfetch" "$HOME/.local/share/"
+
+# creating symlinks
+cp -a "$dir/config" "$HOME/.hyprconf"
+mv "$HOME/.hyprconf/fastfetch" "$HOME/.local/share/"
+
+for dotfilesDir in "$HOME/.hyprconf"/*; do
+    configDirName=$(basename "$dotfilesDir")
+    configDirPath="$HOME/.config/$configDirName"
+
+    ln -sfn "$dotfilesDir" "$configDirPath"
+done
 
 sleep 1
 
 if [[ -d "$scripts_dir" ]]; then
     # make all the scripts executable...
     chmod +x "$scripts_dir"/* 2>&1 | tee -a "$log"
-    chmod +x "$HOME/.config/fish"/* 2>&1 | tee -a "$log"
+    chmod +x "$HOME/.hyprconf/fish/functions"/* 2>&1 | tee -a "$log"
     msg dn "All the necessary scripts have been executable..."
     sleep 1
 else
@@ -273,7 +267,23 @@ cp -r "$dir/extras/fonts" "$fonts_dir"
 msg act "Updating font cache..."
 sudo fc-cache -fv 2>&1 | tee -a "$log" &> /dev/null
 
+### Setup extra files and dirs
 
+# dolphinstaterc
+if [[ -f "$HOME/.local/state/dolphinstaterc" ]]; then
+    mv "$HOME/.local/state/dolphinstaterc" "$HOME/.local/state/dolphinstaterc.back"
+fi
+
+# konsole
+if [[ -d "$HOME/.local/share/konsole" ]]; then
+    mv "$HOME/.local/share/konsole" "$HOME/.local/share/konsole.back"
+fi
+
+cp -r "$dir/local/state/dolphinstaterc" "$HOME/.local/state/"
+cp -r "$dir/local/share/konsole" "$HOME/.local/share/"
+
+
+# wayland session dir
 wayland_session_dir=/usr/share/wayland-sessions
 if [ -d "$wayland_session_dir" ]; then
     msg att "$wayland_session_dir found..."
@@ -302,16 +312,19 @@ restore_backup() {
         else
             msg err "Could not restore defaults."
         fi
+
+        if [[ -e "${original_path}.backup" ]]; then
+            rm -rf "${original_path}.backup"
+        fi
     fi
 }
 
 # Restore files
-restore_backup "$keybinds_backup" "$keybinds" "keybinds config file"
-restore_backup "$wrules_backup" "$wrules" "window rules config file"
 restore_backup "$wallpapers_backup" "$wallpapers" "wallpaper directory"
+restore_backup "$hypr_config_backup" "$hypr_config" "hyprland config file"
 
 # restoring hyprland cache
-[[ -e "$HOME/.config/hypr/.cache" ]] && rm -rf "$HOME/.config/hypr/.cache"
+[[ -e "$HOME/.hyprconf/hypr/.cache" ]] && rm -rf "$HOME/.hyprconf/hypr/.cache"
 [[ -e "$hypr_cache_backup" ]] && cp -r "$hypr_cache_backup" "$hypr_cache"
 rm -rf "$backup_dir"
 
@@ -326,14 +339,25 @@ printf " \n"
 # =========  wallpaper section  ========= #
 
 if [[ "$wallpaper" =~ ^[Y|y]$ ]]; then
+    url="https://github.com/WavesOS-Repos/WavesWallpapers/archive/refs/heads/main.zip"
+
+    target_dir="$HOME/.cache/wallpaper-cache"
+    zip_path="$target_dir.zip"
     msg act "Downloading some wallpapers..."
     
-    # cloning the wallpapers in a temporary directory
-    git clone --depth=1 https://github.com/tarangverma-India/WavesWallpapers.git ~/.cache/wallpaper-cache 2>&1 | tee -a "$log" &> /dev/null
+    # Download the ZIP silently with a progress bar
+    curl -L "$url" -o "$zip_path"
+
+    if [[ -f "$zip_path" ]]; then
+        mkdir -p "$target_dir"
+        unzip "$zip_path" "wallpaper-cache-main/*" -d "$target_dir" > /dev/null
+        mv "$target_dir/wallpaper-cache-main/"* "$target_dir" && rmdir "$target_dir/wallpaper-cache-main"
+        rm "$zip_path"
+    fi
 
     # copying the wallpaper to the main directory
     if [[ -d "$HOME/.cache/wallpaper-cache" ]]; then
-        cp -r "$HOME/.cache/wallpaper-cache"/* ~/.config/hypr/Wallpaper/ &> /dev/null
+        cp -r "$HOME/.cache/wallpaper-cache"/* ~/.hyprconf/hypr/Wallpaper/ &> /dev/null
         rm -rf "$HOME/.cache/wallpaper-cache" &> /dev/null
         msg dn "Wallpapers were downloaded successfully..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log") & sleep 0.5
     else
@@ -343,37 +367,49 @@ fi
 
 # =========  wallpaper section  ========= #
 
-if [[ -d "$HOME/.config/hypr/Wallpaper" ]]; then
-    mkdir -p "$HOME/.config/hypr/.cache"
-    wallCache="$HOME/.config/hypr/.cache/.wallpaper"
+if [[ -d "$HOME/.hyprconf/hypr/Wallpaper" ]]; then
 
-    touch "$wallCache"      
+    if [[ -d "$HOME/.hyprconf/hypr/.cache" ]]; then
+        wallName=$(cat "$HOME/.hyprconf/hypr/.cache/.wallpaper")
+        wallpaper=$(find "$HOME/.hyprconf/hypr/Wallpaper" -type f -name "$wallName.*" | head -n 1)
+    else
+        mkdir -p "$HOME/.hyprconf/hypr/.cache"
+        wallCache="$HOME/.hyprconf/hypr/.cache/.wallpaper"
 
-    if [ -f "$HOME/.config/hypr/Wallpaper/linux.jpg" ]; then
-        echo "linux" > "$wallCache"
-        wallpaper="$HOME/.config/hypr/Wallpaper/linux.jpg"
+        touch "$wallCache"      
+
+        if [ -f "$HOME/.hyprconf/hypr/Wallpaper/linux.jpg" ]; then
+            echo "linux" > "$wallCache"
+            wallpaper="$HOME/.hyprconf/hypr/Wallpaper/linux.jpg"
+        fi
     fi
 
     # setting the default wallpaper
-    ln -sf "$wallpaper" "$HOME/.config/hypr/.cache/current_wallpaper.png"
+    ln -sf "$wallpaper" "$HOME/.hyprconf/hypr/.cache/current_wallpaper.png"
 fi
 
 # setting up the waybar
-ln -sf "$HOME/.config/waybar/configs/full-top" "$HOME/.config/waybar/config"
-ln -sf "$HOME/.config/waybar/style/full-top.css" "$HOME/.config/waybar/style.css"
+ln -sf "$HOME/.hyprconf/waybar/configs/full-top" "$HOME/.hyprconf/waybar/config"
+ln -sf "$HOME/.hyprconf/waybar/style/full-top.css" "$HOME/.hyprconf/waybar/style.css"
 
 # setting up hyprlock theme
-ln -sf "$HOME/.config/hypr/lockscreens/hyprlock-1.conf" "$HOME/.config/hypr/hyprlock.conf"
+ln -sf "$HOME/.hyprconf/hypr/lockscreens/hyprlock-1.conf" "$HOME/.hyprconf/hypr/hyprlock.conf"
 
 msg act "Generating colors and other necessary things..."
-"$HOME/.config/hypr/scripts/wallcache.sh" &> /dev/null
-"$HOME/.config/hypr/scripts/pywal.sh" &> /dev/null
+"$HOME/.hyprconf/hypr/scripts/wallcache.sh" &> /dev/null
+"$HOME/.hyprconf/hypr/scripts/pywal.sh" &> /dev/null
 
 
 # setting default themes, icon and cursor
-gsettings set org.gnome.desktop.interface gtk-theme 'TokyoNight'
-gsettings set org.gnome.desktop.interface icon-theme 'Kora-pgrey'
+gsettings set org.gnome.desktop.interface gtk-theme "FlatColor"
+gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
+
+gsettings set org.gnome.desktop.interface icon-theme 'candy-icons'
 gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Ice'
+
+crudini --set ~/.config/Kvantum/kvantum.kvconfig General theme "Dracula"
+crudini --set ~/.config/kdeglobals Icons Theme "candy-icons"
+
 
 msg dn "Script execution was successful! Now logout and log back in and enjoy your customization..." && sleep 1
 
