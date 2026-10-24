@@ -1,52 +1,75 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+# rofi_theme.sh — horizontal preview grid (works on VM + bare metal)
 
-rofiConf="$HOME/.config/rofi/themes/rofi-select_theme.rasi"
-rofiStyleDir="$HOME/.config/rofi/menu"
-rofiAssetDir="$HOME/.config/rofi/assets"
-menu_select_script="$HOME/.config/hypr/scripts/menu.sh"
+rofiConf="${HOME}/.config/rofi/themes/rofi-select_theme.rasi"
+rofiStyleDir="${HOME}/.config/rofi/menu"
+rofiAssetDir="${HOME}/.config/rofi/assets"
+menu_select_script="${HOME}/.config/hypr/scripts/menu.sh"
 
-# Set rofi scaling
+# Defaults when hypr vars missing (VM-safe)
+rofiScale="${rofiScale:-10}"
+hypr_border="${hypr_border:-2}"
 [[ "${rofiScale}" =~ ^[0-9]+$ ]] || rofiScale=10
-r_scale="configuration {font: \"JetBrainsMono Nerd Font ${rofiScale}\";}"
+
 elem_border=$(( hypr_border * 5 ))
-icon_border=$(( elem_border - 5 ))
+icon_border=$(( elem_border > 5 ? elem_border - 5 : 0 ))
 
-# Scale for monitor
-mon_x_res=$(hyprctl -j monitors | jq '.[] | select(.focused==true) | .width')
-mon_scale=$(hyprctl -j monitors | jq '.[] | select(.focused==true) | .scale' | sed "s/\.//")
-mon_x_res=$(( mon_x_res * 100 / mon_scale ))
+# Prefer fixed columns so layout is always left/right on VMs
+col_count=4
+if command -v hyprctl >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+  mon_x_res=$(hyprctl -j monitors 2>/dev/null | jq -r '.[] | select(.focused==true) | .width' | head -1)
+  mon_scale=$(hyprctl -j monitors 2>/dev/null | jq -r '.[] | select(.focused==true) | .scale' | head -1)
+  if [[ -n "$mon_x_res" && "$mon_x_res" =~ ^[0-9]+$ && -n "$mon_scale" ]]; then
+    # scale 1.0 / 1.25 → integer percent (100, 125)
+    scale_pct=$(awk -v s="$mon_scale" 'BEGIN{printf "%d", s*100}')
+    [[ "$scale_pct" -ge 50 ]] || scale_pct=100
+    mon_x_res=$(( mon_x_res * 100 / scale_pct ))
+    elm_width=$(( (20 + 12 + 16) * rofiScale ))
+    max_avail=$(( mon_x_res - (4 * rofiScale) ))
+    if [[ "$elm_width" -gt 0 && "$max_avail" -gt 0 ]]; then
+      col_count=$(( max_avail / elm_width ))
+    fi
+  fi
+fi
+[[ "$col_count" -lt 2 ]] && col_count=2
+[[ "$col_count" -gt 5 ]] && col_count=5
 
-# Generate config
-elm_width=$(( (20 + 12 + 16 ) * rofiScale ))
-max_avail=$(( mon_x_res - (4 * rofiScale) ))
-col_count=$(( max_avail / elm_width ))
-[[ "${col_count}" -gt 5 ]] && col_count=5
-r_override="window{width:100%;} listview{columns:${col_count};} element{orientation:vertical;border-radius:${elem_border}px;} element-icon{border-radius:${icon_border}px;size:20em;} element-text{enabled:false;}"
+# Force horizontal-style grid + visible icons (overrides weak VM calc)
+r_override="window{width:100%;height:70%;}
+listview{columns:${col_count};lines:2;layout:vertical;}
+element{orientation:vertical;border-radius:${elem_border}px;}
+element-icon{border-radius:${icon_border}px;size:12em;}
+element-text{enabled:false;}"
 
-# List available styles and present in rofi menu with icons
-style_files=($(ls "$rofiAssetDir"/*.png))
+mapfile -t style_files < <(ls "$rofiAssetDir"/style-*.png 2>/dev/null | sort -V)
+if [[ ${#style_files[@]} -eq 0 ]]; then
+  notify-send "Rofi theme" "No previews in $rofiAssetDir"
+  exit 1
+fi
 
-# Extract only the file names for display
-style_names=("${style_files[@]##*/}")
-
-# Prepare the list for rofi with icons
 rofi_list=""
-for style_name in "${style_names[@]}"; do
-    style_num=$(echo "$style_name" | awk -F '-' '{print $2}' | awk -F '.' '{print $1}')
-    rofi_list+="${style_name}\x00icon\x1f${rofiAssetDir}/${style_name}\n"
+for f in "${style_files[@]}"; do
+  style_name="$(basename "$f")"
+  rofi_list+="${style_name}\x00icon\x1f${f}\n"
 done
 
-# Present the list of styles using rofi and get the selected style
-selected_style=$(echo -e "$rofi_list" | rofi -dmenu -markup-rows -theme-str "$r_override" -config "$rofiConf" -p "Select Rofi theme")
+selected_style="$(printf '%b' "$rofi_list" | rofi -dmenu -show-icons -markup-rows \
+  -theme-str "$r_override" \
+  -config "$rofiConf" \
+  -p "Select Rofi theme" || true)"
+
 echo "selected style: $selected_style"
+[[ -n "${selected_style:-}" ]] || exit 0
 
-# If a selection was made, apply the new style
-if [ -n "$selected_style" ]; then
-    selected_style_number=$(echo "$selected_style" | awk -F '-' '{print $2}' | awk -F '.' '{print $1}')
-    selected_style_path=$(ls ${rofiStyleDir}/style-${selected_style_number}.rasi)
+selected_style_number="$(echo "$selected_style" | sed -n 's/^style-\([0-9]\+\)\.png.*/\1/p')"
+[[ -n "$selected_style_number" ]] || exit 1
 
-    notify-send -t 2000 -i "$HOME/.config/rofi/assets/style-${selected_style_number}.png" "Theme applied"
+[[ -f "${rofiStyleDir}/style-${selected_style_number}.rasi" ]] || exit 1
 
-    # Update the menu_select.sh script with the selected theme
-    sed -i "s|^theme=.*|theme='style-${selected_style_number}'|" "$menu_select_script"
+if grep -qE '^theme=' "$menu_select_script"; then
+  sed -i "s|^theme=.*|theme='style-${selected_style_number}'|" "$menu_select_script"
+else
+  sed -i "1a theme='style-${selected_style_number}'" "$menu_select_script"
 fi
+
+notify-send -t 2000 -i "${rofiAssetDir}/style-${selected_style_number}.png" "Theme applied" "style-${selected_style_number}"
