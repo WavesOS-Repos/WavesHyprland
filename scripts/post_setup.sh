@@ -14,6 +14,10 @@ if [[ -d "$SCRIPTS" ]]; then
   ok "chmod hypr/scripts"
 fi
 
+if [[ -f "${CONFIG_DIR}/qylock/sddm.sh" ]]; then
+  chmod +x "${CONFIG_DIR}/qylock/sddm.sh" 2>/dev/null || true
+fi
+
 [[ -f "${CACHE}/.theme_mode" ]] || { echo dark > "${CACHE}/.theme_mode"; ok "theme_mode=dark"; }
 
 MC="${HYPR}/matugen-colors.lua"
@@ -66,4 +70,32 @@ else
 fi
 
 command -v fc-cache &>/dev/null && fc-cache -f >/dev/null 2>&1 || true
+
+# Dark theme via theme-switch.sh
+THEME_SWITCH="${SCRIPTS}/theme-switch.sh"
+if [[ -x "$THEME_SWITCH" ]] || [[ -f "$THEME_SWITCH" ]]; then
+  log "Applying dark theme via theme-switch.sh"
+  bash "$THEME_SWITCH" dark 2>/dev/null || bash "$THEME_SWITCH" 2>/dev/null || warn "theme-switch.sh failed (ok if Hyprland is not running yet)"
+  ok "theme-switch requested (dark)"
+else
+  warn "theme-switch.sh not found at $THEME_SWITCH"
+  echo dark > "${CACHE}/.theme_mode"
+fi
+
+# Reload Hyprland if a session is running
+if command -v hyprctl &>/dev/null; then
+  if hyprctl instances 2>/dev/null | grep -q . || [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+    log "hyprctl reload"
+    if hyprctl reload 2>/dev/null; then
+      ok "Hyprland reloaded"
+    else
+      warn "hyprctl reload failed"
+    fi
+  else
+    warn "Hyprland not running — skip hyprctl reload (reboot will apply everything)"
+  fi
+else
+  warn "hyprctl not found — skip reload"
+fi
+
 ok "Post-setup complete"
