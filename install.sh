@@ -3,6 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/common.sh
 source "$SCRIPT_DIR/scripts/common.sh"
 
 run_step() {
@@ -21,13 +22,35 @@ full_install() {
   run_step install_themes.sh
   run_step install_sddm_qylock.sh
   run_step post_setup.sh
+
   echo
   ok "=== Install finished ==="
   log "Backup: $(cat /tmp/waveshyprland-last-backup 2>/dev/null || echo n/a)"
-  echo "  1. sudo systemctl enable sddm"
-  echo "  2. Log into Hyprland"
-  echo "  3. Super+W wallpaper · Super+T theme · Super+H keybinds"
-  echo "  4. Kitty: no dark-theme.auto.conf"
+  echo
+  echo "  After reboot:"
+  echo "    • Log into Hyprland"
+  echo "    • Super+W  wallpaper (python ~/.config/wallfliper/main.py)"
+  echo "    • Super+T  theme · Super+H  keybinds"
+  echo "    • Super+Shift+I  SDDM theme (sddm.sh)"
+  echo
+
+  if [[ -t 1 ]]; then
+    printf '\n\033[1m\033[31m'
+  fi
+  cat << 'REBOOT'
+
+  ╔══════════════════════════════════════════════════════════╗
+  ║                                                          ║
+  ║   PLEASE REBOOT YOUR PC MANUALLY TO FINISH SETUP         ║
+  ║                                                          ║
+  ║   Run:   sudo reboot                                     ║
+  ║                                                          ║
+  ╚══════════════════════════════════════════════════════════╝
+
+REBOOT
+  if [[ -t 1 ]]; then
+    printf '\033[0m\n'
+  fi
 }
 
 usage() {
