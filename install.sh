@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/scripts/common.sh"
 
 run_step() {
-  bash "$SCRIPT_DIR/scripts/$1"
+  bash "$ROOT/scripts/$1"
 }
 
 full_install() {
