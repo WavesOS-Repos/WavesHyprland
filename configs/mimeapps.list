@@ -1,0 +1,14 @@
+[Added Associations]
+application/zip=unzip.desktop;
+text/markdown=org.gnome.gedit.desktop;
+
+[Default Applications]
+application/zip=unzip.desktop;
+x-scheme-handler/discord=vesktop.desktop
+text/html=chromium.desktop
+x-scheme-handler/http=chromium.desktop
+x-scheme-handler/https=chromium.desktop
+x-scheme-handler/about=chromium.desktop
+x-scheme-handler/unknown=chromium.desktop
+application/xhtml+xml=chromium.desktop
+inode/directory=thunar.desktop

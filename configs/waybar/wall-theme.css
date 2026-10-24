@@ -1,0 +1,66 @@
+/* Core (pywal-style) */
+@define-color background #15121c;
+@define-color foreground #e7e0ef;
+@define-color color0 #15121c;
+@define-color color1 #ffece9;
+@define-color color2 #faebff;
+@define-color color3 #ffeafa;
+@define-color color4 #f5edff;
+@define-color color5 #faebff;
+@define-color color6 #ffeafa;
+@define-color color7 #e7e0ef;
+@define-color color8 #f5edfc;
+@define-color color9 #ffece9;
+@define-color color10 #faebff;
+@define-color color11 #ffeafa;
+@define-color color12 #f5edff;
+@define-color color13 #faebff;
+@define-color color14 #ffeafa;
+@define-color color15 #e7e0ef;
+
+/* Catppuccin-compatible aliases (dual-tone, catppuccin-top, skew, etc.) */
+@define-color base #15121c;
+@define-color mantle #15121c;
+@define-color crust #15121c;
+@define-color text #e7e0ef;
+@define-color subtext0 #f5edfc;
+@define-color subtext1 #f5edfc;
+@define-color surface0 #15121c;
+@define-color surface1 #15121c;
+@define-color surface2 #f5edfc;
+@define-color overlay0 #f5edfc;
+@define-color overlay1 #f5edfc;
+@define-color overlay2 #f5edfc;
+
+@define-color rosewater #ffeafa;
+@define-color flamingo #ffeafa;
+@define-color pink #ffeafa;
+@define-color mauve #faebff;
+@define-color red #ffece9;
+@define-color maroon #ffece9;
+@define-color peach #ffeafa;
+@define-color yellow #ffeafa;
+@define-color green #faebff;
+@define-color teal #faebff;
+@define-color sky #f5edff;
+@define-color sapphire #f5edff;
+@define-color blue #f5edff;
+@define-color lavender #f5edff;
+
+/* Material-style aliases (bar-left etc.) */
+@define-color primary #f5edff;
+@define-color secondary #faebff;
+@define-color tertiary #ffeafa;
+@define-color error #ffece9;
+@define-color surface #15121c;
+@define-color outline #f5edfc;
+@define-color on_background #e7e0ef;
+@define-color surface_container_highest #15121c;
+@define-color surface_container_high #15121c;
+@define-color inverse_surface #e7e0ef;
+@define-color secondary_container #faebff;
+@define-color on_secondary_container #15121c;
+@define-color on_surface_variant #f5edfc;
+@define-color ansy_blue #f5edff;
+@define-color ansi_red #ffece9;
+@define-color ansi_magenta_bright #ffeafa;

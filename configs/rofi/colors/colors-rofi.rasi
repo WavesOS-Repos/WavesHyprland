@@ -1,0 +1,29 @@
+* {
+    background:                  #15121c;
+    background-alt:              #15121c;
+    foreground:                  #e7e0ef;
+    selected-normal-background:  #f5edff;
+    selected-active-background:  #f5edff;
+    active-background:           #faebff;
+    alternate-active-background: #15121c;
+    urgent-background:           #ffece9;
+
+    cursorcolor:                 #f5edff;
+
+    color0:  #15121c;
+    color1:  #ffece9;
+    color2:  #faebff;
+    color3:  #ffeafa;
+    color4:  #f5edff;
+    color5:  #faebff;
+    color6:  #ffeafa;
+    color7:  #e7e0ef;
+    color8:  #f5edfc;
+    color9:  #ffece9;
+    color10: #faebff;
+    color11: #ffeafa;
+    color12: #f5edff;
+    color13: #faebff;
+    color14: #ffeafa;
+    color15: #e7e0ef;
+}
