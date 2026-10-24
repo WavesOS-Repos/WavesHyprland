@@ -1,3 +1,4 @@
+wlogout
 matugen-bin
 hyprpicker
 grimblast-git
