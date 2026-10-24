@@ -6,3 +6,4 @@ swaync
 cava
 yazi
 hyprsunset
+mpvpaper
