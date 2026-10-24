@@ -29,6 +29,7 @@ playerctl
 polkit-gnome
 python
 python-pip
+python-pipx
 qt6-5compat
 qt6-declarative
 qt6-multimedia
@@ -54,3 +55,7 @@ xdg-desktop-portal-hyprland
 xdg-user-dirs
 xdg-utils
 rsync
+pyside6
+layer-shell-qt
+awww
+ffmpeg
