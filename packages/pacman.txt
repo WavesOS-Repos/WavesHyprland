@@ -49,7 +49,6 @@ unzip
 waybar
 wireplumber
 wl-clipboard
-wlogout
 xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
 xdg-user-dirs
