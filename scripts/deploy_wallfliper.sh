@@ -10,18 +10,8 @@ if [[ -z "$(find "$SRC" -type f ! -name 'PLACEHOLDER.txt' ! -name '.gitkeep' 2>/
   exit 0
 fi
 
-log "Deploying Wallfliper → $DEST"
 mkdir -p "$DEST"
-rsync -a --exclude 'PLACEHOLDER.txt' --exclude '.gitkeep' "$SRC"/ "$DEST"/
+run_quiet "deploy wallfliper" rsync -a --exclude 'PLACEHOLDER.txt' --exclude '.gitkeep' "$SRC"/ "$DEST"/ \
+  || die "Failed to deploy Wallfliper to $DEST"
 
-REQ="$DEST/requirements.txt"
-if [[ -f "$REQ" ]]; then
-  log "pip install --user -r requirements.txt"
-  if [[ "$(id -u)" -eq 0 && -n "${SUDO_USER:-}" ]]; then
-    sudo -u "$SUDO_USER" pip install --user -r "$REQ" || warn "pip had errors"
-  else
-    pip install --user -r "$REQ" || warn "pip had errors"
-  fi
-fi
-
-ok "Wallfliper deployed"
+# Do NOT pip install requirements.txt (Arch/system packages only)
