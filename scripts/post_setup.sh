@@ -55,11 +55,13 @@ command -v fc-cache &>/dev/null && fc-cache -f >/dev/null 2>&1 || true
 
 pkill -x waybar 2>/dev/null || true
 
+# Old theme-switch.sh: no args = toggle only.
+# Assume install left dark → toggle twice → dark→light→dark.
 THEME_SWITCH="${SCRIPTS}/theme-switch.sh"
 if [[ -f "$THEME_SWITCH" ]]; then
-  if ! bash "$THEME_SWITCH" --dark >/dev/null 2>&1; then
-    warn "theme-switch.sh --dark failed"
-  fi
+  echo dark > "${CACHE}/.theme_mode"
+  bash "$THEME_SWITCH" >/dev/null 2>&1 || true
+  bash "$THEME_SWITCH" >/dev/null 2>&1 || true
 else
   warn "theme-switch.sh not found at $THEME_SWITCH"
   echo dark > "${CACHE}/.theme_mode"
