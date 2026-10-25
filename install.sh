@@ -14,9 +14,27 @@ run_step() {
   fi
 }
 
+# Keep sudo alive so password is asked only once
+sudo_keep_alive() {
+  # Ask once up front
+  if ! sudo -v; then
+    die "sudo authentication failed"
+  fi
+  # Refresh ticket in background until installer exits
+  (
+    while true; do
+      sudo -n true 2>/dev/null || exit 0
+      sleep 30
+    done
+  ) &
+  SUDO_KEEP_ALIVE_PID=$!
+  trap 'kill "${SUDO_KEEP_ALIVE_PID}" 2>/dev/null || true' EXIT
+}
+
 full_install() {
   show_logo
   require_arch
+  sudo_keep_alive
   echo "Installing WavesHyprland (quiet)…"
   echo
 
