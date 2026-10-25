@@ -6,19 +6,15 @@ HYPR="${CONFIG_DIR}/hypr"
 CACHE="${HYPR}/.cache"
 SCRIPTS="${HYPR}/scripts"
 
-log "Post-setup"
 mkdir -p "$CACHE"
 
 if [[ -d "$SCRIPTS" ]]; then
   chmod +x "$SCRIPTS"/*.sh 2>/dev/null || true
-  ok "chmod hypr/scripts"
 fi
+[[ -f "${CONFIG_DIR}/qylock/sddm.sh" ]] && chmod +x "${CONFIG_DIR}/qylock/sddm.sh" 2>/dev/null || true
 
-if [[ -f "${CONFIG_DIR}/qylock/sddm.sh" ]]; then
-  chmod +x "${CONFIG_DIR}/qylock/sddm.sh" 2>/dev/null || true
-fi
-
-[[ -f "${CACHE}/.theme_mode" ]] || { echo dark > "${CACHE}/.theme_mode"; ok "theme_mode=dark"; }
+# Force dark mode file BEFORE theme-switch (prevents toggle → light)
+echo dark > "${CACHE}/.theme_mode"
 
 MC="${HYPR}/matugen-colors.lua"
 if [[ ! -f "$MC" ]]; then
@@ -29,7 +25,6 @@ return {
     surface = "#313244", outline = "#6c7086", error = "#f38ba8",
 }
 LUA
-  ok "seeded matugen-colors.lua"
 fi
 
 KITTY="${CONFIG_DIR}/kitty"
@@ -56,46 +51,43 @@ color13 #cba6f7
 color14 #94e2d5
 color15 #cdd6f4
 KIT
-  ok "seeded colors-matugen.conf"
 fi
-
 rm -f "${KITTY}/"*theme.auto.conf 2>/dev/null || true
 
 WALL_SRC="$ROOT/assets/default_wallpaper.png"
-if [[ -f "$WALL_SRC" ]]; then
-  cp -f "$WALL_SRC" "${CACHE}/current_wallpaper.png"
-  ok "default wallpaper installed"
-else
-  warn "assets/default_wallpaper.png missing"
-fi
+[[ -f "$WALL_SRC" ]] && cp -f "$WALL_SRC" "${CACHE}/current_wallpaper.png" || true
 
 command -v fc-cache &>/dev/null && fc-cache -f >/dev/null 2>&1 || true
 
-# Dark theme via theme-switch.sh
+# Re-assert dark GTK/Kvantum (no light)
+printf '%s\n' '[General]' 'theme=Relax-Kvantum' > "${CONFIG_DIR}/Kvantum/kvantum.kvconfig"
+command -v kvantummanager &>/dev/null && kvantummanager --set Relax-Kvantum >/dev/null 2>&1 || true
+if command -v gsettings &>/dev/null; then
+  gsettings set org.gnome.desktop.interface color-scheme prefer-dark >/dev/null 2>&1 || true
+  gsettings set org.gnome.desktop.interface gtk-theme "Relax-GTK" >/dev/null 2>&1 || true
+  gsettings set org.gnome.desktop.interface icon-theme "Relax-Dark-Icons" >/dev/null 2>&1 || true
+fi
+
 THEME_SWITCH="${SCRIPTS}/theme-switch.sh"
-if [[ -x "$THEME_SWITCH" ]] || [[ -f "$THEME_SWITCH" ]]; then
-  log "Applying dark theme via theme-switch.sh"
-  bash "$THEME_SWITCH" dark 2>/dev/null || bash "$THEME_SWITCH" 2>/dev/null || warn "theme-switch.sh failed (ok if Hyprland is not running yet)"
-  ok "theme-switch requested (dark)"
-else
-  warn "theme-switch.sh not found at $THEME_SWITCH"
-  echo dark > "${CACHE}/.theme_mode"
-fi
-
-# Reload Hyprland if a session is running
-if command -v hyprctl &>/dev/null; then
-  if hyprctl instances 2>/dev/null | grep -q . || [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
-    log "hyprctl reload"
-    if hyprctl reload 2>/dev/null; then
-      ok "Hyprland reloaded"
-    else
-      warn "hyprctl reload failed"
-    fi
+if [[ -f "$THEME_SWITCH" ]]; then
+  # Detach: do not leave waybar attached to installer TTY
+  # Prefer explicit dark; if script toggles when given no mode, pass dark only
+  if bash "$THEME_SWITCH" dark >/dev/null 2>&1; then
+    true
   else
-    warn "Hyprland not running — skip hyprctl reload (reboot will apply everything)"
+    # Fallback: set mode file and run without leaving waybar on this TTY
+    echo dark > "${CACHE}/.theme_mode"
+    # Kill any waybar started by theme-switch on this session's terminal
+    true
   fi
-else
-  warn "hyprctl not found — skip reload"
 fi
 
-ok "Post-setup complete"
+# Stop waybar that may have been spawned on this TTY; user gets it from autostart after reboot
+pkill -x waybar 2>/dev/null || true
+# Do not restart waybar here — avoids cpu module spam in installer terminal
+
+if command -v hyprctl &>/dev/null; then
+  if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+    hyprctl reload >/dev/null 2>&1 || warn "hyprctl reload failed"
+  fi
+fi
