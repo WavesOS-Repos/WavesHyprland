@@ -75,3 +75,4 @@ hl.window_rule({
     float = true,
     size = "1000 700",
 })
+

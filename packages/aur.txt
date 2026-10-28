@@ -8,3 +8,4 @@ cava
 yazi
 hyprsunset
 mpvpaper
+eww

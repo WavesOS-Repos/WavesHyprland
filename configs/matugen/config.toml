@@ -19,3 +19,8 @@ post_hook   = "kill -SIGUSR1 $(pidof kitty) 2>/dev/null || true"
 [templates.rofi]
 input_path  = "~/.config/matugen/templates/rofi.rasi"
 output_path = "~/.config/rofi/colors/colors-rofi.rasi"
+
+[templates.eww]
+input_path = "~/.config/matugen/templates/eww-colors.scss"
+output_path = "~/.config/eww/colors.scss"
+post_hook = "eww reload"
