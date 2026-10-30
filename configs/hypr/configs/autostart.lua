@@ -1,7 +1,7 @@
 -- autostart.lua
 hl.on("hyprland.start", function()
     hl.exec_cmd("~/.config/hypr/scripts/waybar-reload.sh --reload")
-    hl.exec("~/.config/hypr/scripts/eww-watchdog.sh")
+    hl.exec_cmd("~/.config/hypr/scripts/eww-watchdog.sh")
      -- image wallpaper daemon
     hl.exec_cmd("swww-daemon")
     hl.exec_cmd("wl-paste --type text --watch cliphist store")

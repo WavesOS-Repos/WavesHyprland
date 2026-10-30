@@ -1,0 +1,146 @@
+@import "colors.scss";
+
+* {
+  all: unset;
+}
+
+box, label, scale, button, image, progress, circular-progress {
+  background-color: transparent;
+}
+
+/* ========== ANTARES ========== */
+.antares {
+  background-color: transparent;
+  padding: 0;
+  color: $fg;
+  font-family: "PT Sans", "Roboto", sans-serif;
+}
+
+.day-row { margin-bottom: 0; }
+
+.dot {
+  color: $primary;
+  font-size: 128px;
+  font-family: "Metropolis Black", "Inter Black", sans-serif;
+}
+
+.day {
+  color: $fg;
+  font-size: 128px;
+  font-weight: 800;
+  font-family: "Metropolis Black", "Inter", sans-serif;
+}
+
+.date {
+  font-size: 30px;
+  margin: 12px 0 28px 16px;
+  color: $fg;
+}
+
+.weather-icon-box {
+  background-color: $primary;
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.weather-icon {
+  font-size: 52px;
+  color: $bg;
+}
+
+.wline {
+  font-size: 15px;
+  color: $secondary;
+}
+
+.ring {
+  color: $primary;
+  background-color: rgba($outline, 0.25);
+}
+
+.ring-val { color: $fg; }
+.ring-label { color: $secondary; }
+
+.words {
+  font-size: 30px;
+  font-weight: 700;
+  margin-top: 36px;
+  color: $fg;
+}
+
+/* ========== FUYUE ========== */
+
+.fuyue {
+  background-color: transparent;
+  color: $fg;
+  font-family: "Inter", "Roboto", sans-serif;
+  padding: 0 0 200px 0;
+  margin: 0;
+}
+
+.fuyue-weekday-wrap {
+  margin-right: -150px;
+  margin-left: 50px;
+  margin-bottom: 10px;
+  padding-top: 400px;
+  background-color: transparent;
+}
+
+.fuyue-weekday {
+  font-family: "Jost", "Inter", sans-serif;
+  font-size: 33px;
+  font-weight: 700;
+  color: $fg;
+  min-width: 125px;
+}
+
+.fuyue-cluster {
+  background-color: transparent;
+}
+
+.fuyue-day-img {
+  background-color: transparent;
+  margin-bottom: 50px;
+}
+
+.fuyue-right {
+  background-color: transparent;
+  margin-left: -200px;
+  margin-bottom: 10px;
+  padding-top: 375px;
+  min-width: 400px;
+}
+
+.fuyue-month {
+  font-family: "Jost", "Inter", sans-serif;
+  font-size: 80px;
+  font-weight: 700;
+  color: $fg;
+  margin-bottom: 8px;
+}
+
+.fuyue-time {
+  font-family: "Inter", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: $fg;
+  margin-bottom: 18px;
+}
+
+.fuyue-line {
+  background-color: $primary;
+  min-height: 4px;
+  min-width: 225px;
+  margin: 5px 0 18px 0;
+  opacity: 0.9;
+}
+
+.fuyue-wline {
+  font-family: "Inter", sans-serif;
+  font-size: 19px;
+  color: $secondary;
+  margin-bottom: 5px;
+}
+

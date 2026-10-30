@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="340" height="620"
+     viewBox="0 0 340 620"
+     preserveAspectRatio="xMidYMid slice">
+
+  <defs>
+    <linearGradient id="dateFade" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#e6fd00" stop-opacity="0.95"/>
+      <stop offset="45%"  stop-color="#e6fd00" stop-opacity="0.45"/>
+      <stop offset="75%"  stop-color="#e6fd00" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#e6fd00" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <text x="180" y="620"
+        text-anchor="middle"
+        font-family="Impact, Haettenschweiler, Arial Narrow Bold, sans-serif"
+        font-size="350"
+        font-weight="900"
+        letter-spacing="-15"
+        transform="translate(170 700) scale(0.72 1.55) translate(-170 -700)"
+        fill="url(#dateFade)">30</text>
+</svg>

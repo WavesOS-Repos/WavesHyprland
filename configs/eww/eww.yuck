@@ -1,0 +1,121 @@
+(defwindow antares
+  :monitor 0
+  :geometry (geometry
+    :x "50"
+    :y "40"
+    :width "650"
+    :height "380"
+    :anchor "bottom left")
+  :stacking "bg"
+  :wm-ignore true
+  (antares))
+
+(defwidget antares []
+  (box :orientation "v" :space-evenly false :class "antares"
+    (box :orientation "h" :space-evenly false :halign "start" :class "day-row"
+      (label :class "dot" :text ".")
+      (label :class "day" :text day))
+
+    (label :class "date" :halign "start" :text date)
+
+    (box :orientation "h" :space-evenly false :class "weather-row"
+      (box :class "weather-icon-box"
+        (label :class "weather-icon" :text wicon))
+      (box :orientation "v" :space-evenly false :class "weather-text"
+        (label :class "wline" :halign "start" :wrap true :limit-width 52 :text wline)
+        (label :class "wline" :halign "start" :wrap true :limit-width 52 :text wwind)
+        (label :class "wline" :halign "start" :wrap true :limit-width 52 :text whum)))
+
+    (box :orientation "h" :space-evenly true :class "rings"
+      (ring-metric :label "Cpu" :value cpu)
+      (ring-metric :label "Mem" :value mem)
+      (ring-metric :label "Home" :value home))
+
+    (label :class "words" :halign "start" :text words)))
+
+(defwidget ring-metric [label value]
+  (box :orientation "v" :space-evenly false :halign "center" :class "ring-wrap"
+    (circular-progress
+      :value {value}
+      :start-at 25
+      :thickness 10
+      :clockwise true
+      :class "ring"
+      :width 88
+      :height 88
+      (label :class "ring-val" :text "${value}%"))
+    (label :class "ring-label" :text "${label} :")))
+
+(defpoll day   :interval "30s" `date +%A`)
+(defpoll date  :interval "30s" `date '+%d %B %Y'`)
+(defpoll words :interval "1s"  `~/.config/eww/scripts/time-words.sh`)
+(defpoll cpu   :interval "2s"  `~/.config/eww/scripts/cpu.sh`)
+(defpoll mem   :interval "2s"  `~/.config/eww/scripts/mem.sh`)
+(defpoll home  :interval "5s"  `~/.config/eww/scripts/home.sh`)
+(defpoll wicon :interval "5s"  `~/.config/eww/scripts/weather-icon.sh`)
+(defpoll wline :interval "5s"  `~/.config/eww/scripts/weather-line.sh`)
+(defpoll wwind :interval "5s"  `~/.config/eww/scripts/weather-wind.sh`)
+(defpoll whum  :interval "5s"  `~/.config/eww/scripts/weather-hum.sh`)
+
+(defpoll weather_tick :interval "300s" `~/.config/eww/scripts/weather-fetch.sh >/dev/null 2>&1; echo ok`)
+
+
+;; ===================== FUYUE =====================
+(defwindow fuyue
+  :monitor 0
+  :geometry (geometry
+    :x "-20"
+    :y "-150"
+    :width "1375"
+    :height "1450"
+    :anchor "bottom left")
+  :stacking "bg"
+  :wm-ignore true
+  (fuyue))
+  
+(defwidget fuyue []
+  (box :orientation "h"
+       :space-evenly false
+       :halign "start"
+       :valign "end"
+       :class "fuyue"
+
+    ;; Weekday — independent container
+    (box :class "fuyue-weekday-wrap" :valign "fill"
+      (label :class "fuyue-weekday"
+             :text fuyue_weekday
+             :wrap false))
+
+    ;; SVG date and text — separate sibling container
+    (box :orientation "h"
+         :space-evenly false
+         :halign "start"
+         :valign "end"
+         :class "fuyue-cluster"
+
+      (box :class "fuyue-day-img" :valign "end"
+        (image :path {fuyue_svg}
+               :image-width 340
+               :image-height 620))
+
+      (box :orientation "v"
+           :space-evenly false
+           :halign "start"
+           :valign "end"
+           :class "fuyue-right"
+
+        (label :class "fuyue-month" :halign "start" :text fuyue_month)
+        (label :class "fuyue-time" :halign "start" :text fuyue_clock)
+        (box :class "fuyue-line")
+        (label :class "fuyue-wline" :halign "start" :wrap true :limit-width 48 :text fw1)
+        (label :class "fuyue-wline" :halign "start" :wrap true :limit-width 48 :text fw2)
+        (label :class "fuyue-wline" :halign "start" :wrap true :limit-width 48 :text fw3)))))
+	
+(defpoll fuyue_weekday :interval "30s" `~/.config/eww/scripts/ds.sh`)
+(defpoll fuyue_month   :interval "30s" `date +%^B`)
+(defpoll fuyue_clock   :interval "1s"  `date '+%I:%M %p'`)
+(defpoll fw1 :interval "5s" `~/.config/eww/scripts/fuyue-weather.sh | sed -n '1p'`)
+(defpoll fw2 :interval "5s" `~/.config/eww/scripts/fuyue-weather.sh | sed -n '2p'`)
+(defpoll fw3 :interval "5s" `~/.config/eww/scripts/fuyue-weather.sh | sed -n '3p'`)
+(defpoll fuyue_svg :interval "60s" `~/.config/eww/scripts/fuyue-day-svg.sh`)
+

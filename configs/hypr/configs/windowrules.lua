@@ -76,3 +76,10 @@ hl.window_rule({
     size = "1000 700",
 })
 
+hl.window_rule({
+    name = "eww",
+    match = { class = "eww" },
+    float = true,
+    pin = true,
+    opaque = false,
+})
