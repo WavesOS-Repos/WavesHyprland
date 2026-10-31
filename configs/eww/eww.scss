@@ -144,3 +144,43 @@ box, label, scale, button, image, progress, circular-progress {
   margin-bottom: 5px;
 }
 
+/* ========== ROCK ========== */
+.rock {
+  background-color: transparent;
+  color: $fg;
+  padding: 0;
+  margin: 0;
+}
+
+.rock-day-box {
+  min-width: 1200px;
+}
+
+.rock-day {
+  font-family: "Anurati", "Impact", sans-serif;
+  font-size: 72px;
+  font-weight: 400;
+  letter-spacing: 60px;
+  color: $fg;
+  margin: 0;
+  padding: 0;
+}
+
+.rock-meta {
+  margin-top: 20px;
+  margin-right: 20px;
+}
+
+.rock-date {
+  font-family: "Chilanka", "Chilanka Regular", cursive;
+  font-size: 15px;
+  color: $secondary;
+  margin: 0 0 4px 0;
+}
+
+.rock-time {
+  font-family: "Chilanka", "Chilanka Regular", cursive;
+  font-size: 20px;
+  color: $fg;
+  margin: 0;
+}

@@ -23,4 +23,4 @@ output_path = "~/.config/rofi/colors/colors-rofi.rasi"
 [templates.eww]
 input_path = "~/.config/matugen/templates/eww-colors.scss"
 output_path = "~/.config/eww/colors.scss"
-post_hook = "eww reload"
+post_hook = "eww reload; ~/.config/hypr/scripts/eww-widget.sh --ensure"

@@ -119,3 +119,41 @@
 (defpoll fw3 :interval "5s" `~/.config/eww/scripts/fuyue-weather.sh | sed -n '3p'`)
 (defpoll fuyue_svg :interval "60s" `~/.config/eww/scripts/fuyue-day-svg.sh`)
 
+;; ===================== ROCK =====================
+(defwindow rock
+  :monitor 0
+  :geometry (geometry
+    :x "0"
+    :y "170"
+    :width "1400"          ;; deliberately oversized
+    :height "300"
+    :anchor "top center")
+  :stacking "bg"
+  :wm-ignore true
+  (rock))
+
+(defwidget rock []
+  (box :orientation "v"
+       :space-evenly false
+       :halign "center"
+       :valign "start"
+       :class "rock"
+       :width 1400
+
+    (box :halign "center" :hexpand true :class "rock-day-box"
+      (label :class "rock-day"
+             :text rock_day
+             :wrap false
+             :limit-width 0))
+
+    ;; Changed from "end" → "center"
+    (box :orientation "v"
+         :space-evenly false
+         :halign "center"
+         :class "rock-meta"
+      (label :class "rock-date" :text rock_date :wrap false)
+      (label :class "rock-time" :text rock_time :wrap false))))
+
+(defpoll rock_day  :interval "30s" `date +%A | tr '[:lower:]' '[:upper:]'`)
+(defpoll rock_date :interval "30s" `date '+%B %d %Y'`)
+(defpoll rock_time :interval "1s"  `date '+- %I:%M %p -'`)

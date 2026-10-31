@@ -1,48 +1,47 @@
-
 #!/usr/bin/env bash
-
-# Eww startup + wallpaper-change watchdog
-# Independent of Wallfliper and Matugen
-
+# EWW startup + wallpaper-change watchdog
+# Restores the widget chosen by eww-widget.sh (not always antares)
 set -u
+
+WIDGET_SH="${HOME}/.config/hypr/scripts/eww-widget.sh"
+STATE_FILE="${HOME}/.config/eww/active-widget"
 
 sleep 2
 
-# Start Eww if needed
-if ! pgrep -x eww >/dev/null 2>&1; then
-    eww daemon
-    sleep 1
+# Default once if never set
+if [[ ! -f "$STATE_FILE" ]]; then
+    mkdir -p "$(dirname "$STATE_FILE")"
+    echo "antares" > "$STATE_FILE"
 fi
 
-# Open the widget once at startup
-eww open antares >/dev/null 2>&1 || true
+# Startup: daemon + saved widget
+bash "$WIDGET_SH" --ensure
 
-# Track wallpaper-related process changes
 get_wallpaper_state() {
     {
-        pgrep -af 'mpvpaper|swww-daemon|swww img|awww-daemon|awww img' || true
+        pgrep -af 'mpvpaper|swww-daemon|swww img|awww-daemon|awww img|wallfliper' || true
     } | sort
 }
 
 last_state="$(get_wallpaper_state)"
 
 while true; do
-    sleep 1
+    sleep 2
     current_state="$(get_wallpaper_state)"
 
     if [[ "$current_state" != "$last_state" ]]; then
         last_state="$current_state"
-
-        # Wait until the wallpaper transition settles
         sleep 3
-
-        # Refresh only if the Eww window is missing
-        if ! eww windows 2>/dev/null | grep -q 'antares'; then
-            eww open antares >/dev/null 2>&1 || true
-        fi
-
-        # Update the baseline after the transition
+        # Re-open saved widget only if it disappeared
+        bash "$WIDGET_SH" --ensure
         last_state="$(get_wallpaper_state)"
     fi
-done
 
+    # Also recover if user/session killed the open widget
+    active="$(cat "$STATE_FILE" 2>/dev/null || echo none)"
+    if [[ "$active" != "none" && -n "$active" ]]; then
+        if ! eww active-windows 2>/dev/null | grep -q "^${active}"; then
+            bash "$WIDGET_SH" --ensure
+        fi
+    fi
+done

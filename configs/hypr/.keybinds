@@ -1,75 +1,86 @@
  = 
+--------------------------------------------------------
 # Apps and scripts
- + Return | Open terminal
- + Shift + Return | Open floating Kitty terminal
- + Q | Close active window
- + E | Open file manager
- + Shift + E | Open Yazi in Kitty
- + R | Open app launcher
- + B | Open default browser
- + Shift + B | Configure default browser
- + C | Clipboard history script
- + Alt + C | Clipboard history script
- + Alt + W | Clear clipboard history
- + Shift + D | Open emoji picker
- + L | Lock screen (hyprlock)
- + M | Exit Hyprland / run hyprshutdown if available
- + Y | Open default editor
- + Shift + Y | Configure default editor
+ + Return | Terminal
+ + Shift + Return | Floating Kitty
+ + Q | Close window
+ + E | File manager
+ + Shift + E | Yazi
+ + R | App launcher
+ + B | Default browser
+ + Shift + B | Browser settings
+ + C | Copy clipboard history
+ + Alt + W | Clipboard history (script action)
+ + Shift + D | Emoji picker
+ + L | Lock screen
+ + M | Exit Hyprland
+ + Y | Default editor
+ + Shift + Y | Editor settings
+--------------------------------------------------------
+# Desktop and appearance
+ + G | Settings
  + W | Change wallpaper
- + Shift + W | Change Waybar layout
- + Shift + R | Change Rofi theme
- + A | Take screenshot
- + U | Run system updater in Kitty
- + Shift + I | Run Qylock SDDM script in Kitty
- + H | Show keybind help
- + X | Open wlogout power menu
- + Shift + C | Open color picker
- + T | Run theme-switch script
+ + Shift + W | Waybar layout
+ + Shift + R | Rofi theme
+ + A | Screenshot
+ + U | System updater
+ + Shift + I | Qylock SDDM
+ + H | Keybind help
+ + X | Power menu
+ + Shift + C | Color picker
+ + T | Switch theme
+ + Shift + F | Eww widgets
+--------------------------------------------------------
 # Window management
- + V | Toggle floating for active window
+ + V | Toggle floating
  + Alt + V | Toggle floating
- + F | Toggle fullscreen
- + P | Toggle pseudo-tiling
- + J | Toggle split layout
+ + F | Fullscreen
+ + P | Pseudo-tiling
+ + J | Toggle split
  + Ctrl + H | Move window left
  + Ctrl + J | Move window down
  + Ctrl + K | Move window up
  + Ctrl + L | Move window right
- + Left click | Drag/move window
+ + Left click | Drag window
  + Right click | Resize window
+--------------------------------------------------------
 # Focus
- + Left | Focus window to the left
- + Right | Focus window to the right
- + Up | Focus window above
- + Down | Focus window below
+ + Left | Focus left
+ + Right | Focus right
+ + Up | Focus up
+ + Down | Focus down
+--------------------------------------------------------
 # Workspaces
- + 1–0 | Switch to workspace 1–10
+ + 1–0 | Switch workspace 1–10
  + Shift + 1–0 | Move window to workspace 1–10
  + Alt + 1–0 | Move window silently to workspace 1–10
- + S | Toggle special workspace "magic"
- + Shift + S | Move window to special workspace "magic"
- + Mouse scroll down | Switch to next workspace
- + Mouse scroll up | Switch to previous workspace
-# Waybar and Hyprland
+ + S | Toggle special workspace
+ + Shift + S | Move window to special workspace
+ + Mouse scroll down | Next workspace
+ + Mouse scroll up | Previous workspace
+--------------------------------------------------------
+# Hyprland and Waybar
  + Ctrl + R | Reload Hyprland
-Ctrl + Esc | Toggle Waybar (waybar-reload.sh --toggle)
-Ctrl + Alt + Esc | Reload Waybar (waybar-reload.sh --reload)
+Ctrl + Esc | Toggle Waybar
+Ctrl + Alt + Esc | Reload Waybar
+--------------------------------------------------------
 # Window switcher
- + Tab | Open Rofi window switcher
-Alt + Tab | Open Rofi window switcher with window theme
-# Zoom (desktop magnifier)
- + Z | Toggle desktop zoom
- + Shift + Z | Increase desktop zoom
- + Alt + Z | Decrease desktop zoom
-# Media and hardware keys
-XF86AudioRaiseVolume | Increase volume
-XF86AudioLowerVolume | Decrease volume
+ + Tab | Window switcher
+Alt + Tab | Themed window switcher
+--------------------------------------------------------
+# Desktop zoom
+ + Z | Toggle zoom
+ + Shift + Z | Zoom in
+ + Alt + Z | Zoom out
+--------------------------------------------------------
+# Media and hardware
+XF86AudioRaiseVolume | Volume up
+XF86AudioLowerVolume | Volume down
 XF86AudioMute | Toggle audio mute
-XF86AudioMicMute | Toggle microphone mute
-XF86MonBrightnessUp | Increase screen brightness
-XF86MonBrightnessDown | Decrease screen brightness
-XF86AudioNext | Next media track
-XF86AudioPause | Play/pause media
-XF86AudioPlay | Play/pause media
-XF86AudioPrev | Previous media track
+XF86AudioMicMute | Toggle mic mute
+XF86MonBrightnessUp | Brightness up
+XF86MonBrightnessDown | Brightness down
+XF86AudioNext | Next track
+XF86AudioPause | Play/pause
+XF86AudioPlay | Play/pause
+XF86AudioPrev | Previous track

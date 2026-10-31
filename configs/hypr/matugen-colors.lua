@@ -1,10 +1,10 @@
 return {
-    primary           = "#e6fd00",
-    secondary         = "#e5f7c4",
-    tertiary          = "#d2fcc3",
-    background        = "#131408",
-    on_background     = "#e4e4ce",
-    surface           = "#131408",
-    outline           = "#f2f1db",
-    error             = "#ffece9",
+    primary           = "#003140",
+    secondary         = "#0f2f44",
+    tertiary          = "#0d2c54",
+    background        = "#f3faff",
+    on_background     = "#131d22",
+    surface           = "#f3faff",
+    outline           = "#232e33",
+    error             = "#600004",
 }

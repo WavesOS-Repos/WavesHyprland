@@ -5,10 +5,10 @@
 
   <defs>
     <linearGradient id="dateFade" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%"   stop-color="#e6fd00" stop-opacity="0.95"/>
-      <stop offset="45%"  stop-color="#e6fd00" stop-opacity="0.45"/>
-      <stop offset="75%"  stop-color="#e6fd00" stop-opacity="0.12"/>
-      <stop offset="100%" stop-color="#e6fd00" stop-opacity="0"/>
+      <stop offset="0%"   stop-color="#003140" stop-opacity="0.95"/>
+      <stop offset="45%"  stop-color="#003140" stop-opacity="0.45"/>
+      <stop offset="75%"  stop-color="#003140" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#003140" stop-opacity="0"/>
     </linearGradient>
   </defs>
 
@@ -19,5 +19,5 @@
         font-weight="900"
         letter-spacing="-15"
         transform="translate(170 700) scale(0.72 1.55) translate(-170 -700)"
-        fill="url(#dateFade)">30</text>
+        fill="url(#dateFade)">31</text>
 </svg>

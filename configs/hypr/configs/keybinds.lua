@@ -54,6 +54,9 @@ hl.bind(
 hl.bind(mainMod .. " + T",
     hl.dsp.exec_cmd("~/.config/hypr/scripts/theme-switch.sh")
 )
+hl.bind(mainMod .. " + SHIFT + F",
+    hl.dsp.exec_cmd("~/.config/hypr/scripts/eww-widget.sh")
+)
 
 -- ── Window ────────────────────────────────────────────────
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
