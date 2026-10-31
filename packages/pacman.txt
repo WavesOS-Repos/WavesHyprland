@@ -56,5 +56,6 @@ xdg-utils
 rsync
 pyside6
 layer-shell-qt
+hyprpm
 awww
 ffmpeg
