@@ -57,6 +57,8 @@ hl.bind(mainMod .. " + T",
 hl.bind(mainMod .. " + SHIFT + F",
     hl.dsp.exec_cmd("~/.config/hypr/scripts/eww-widget.sh")
 )
+hl.bind(mainMod .. " + SHIFT + P",
+    hl.dsp.exec_cmd("kitty --class hyprpm-plugins -e ~/.config/hypr/scripts/hypr-plugins.sh"))
 
 -- ── Window ────────────────────────────────────────────────
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))

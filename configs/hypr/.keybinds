@@ -14,8 +14,9 @@
  + Shift + D | Emoji picker
  + L | Lock screen
  + M | Exit Hyprland
- + Y | Default editor
- + Shift + Y | Editor settings
+ + Y | Code editor
+ + Shift + Y | Default editor
+ + Shift + P | Manage plugins
 --------------------------------------------------------
 # Desktop and appearance
  + G | Settings

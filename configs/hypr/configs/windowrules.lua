@@ -70,6 +70,13 @@ hl.window_rule({
 })
 
 hl.window_rule({
+    name  = "hyprpm-plugins",
+    match = { class = "hyprpm-plugins" },
+    float = true,
+    size  = "900 600",
+})
+
+hl.window_rule({
     name = "yazi",
     match = { class = "yazi" },
     float = true,

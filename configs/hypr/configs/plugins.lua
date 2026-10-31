@@ -1,9 +1,953 @@
--- plugins.lua
--- Add your plugins here
+-- WavesOS / Hyprland Lua plugin configuration reference
+--
+-- IMPORTANT:
+--   * Every executable line in this file is commented out intentionally.
+--   * Nothing in this file changes your setup until you remove the leading "--"
+--     from the relevant lines and the plugin is loaded.
+--   * The examples below are transcribed/adapted from the linked project docs.
+--   * Some projects only document Hyprlang/TOML or dispatchers, not Lua config.
+--     Those sections are labelled instead of inventing Lua option names.
+--   * Plugin APIs and options can change between plugin/Hyprland versions.
+--
+-- Load this file from hyprland.lua only after your normal config bootstrap.
+-- Example (uncomment if this matches your config loader):
+-- require("plugins")
 
--- Example:
--- hl.plugin("hyprbars")
--- hl.plugin("hyprexpo")
--- hl.plugin("hyprtrails")
+-- =============================================================================
+-- COMMUNITY PLUGINS
+-- =============================================================================
 
--- You can also load plugin-specific settings here later
+-- -----------------------------------------------------------------------------
+-- 01. hy3
+-- Repository: https://github.com/outfoxxed/hy3
+-- Config namespace: plugin.hy3
+-- Docs: README.md -> Configuration -> Config fields
+-- NOTE: The README warns that options describe the current commit; check the
+-- README tag matching your installed hy3 build before changing values.
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         hy3 = {
+--             node_collapse_policy = 2, -- 0 remove nested group; 1 keep; 2 keep only under tab parent
+--             group_inset = 10,         -- inset for a one-window group
+--             tab_first_window = false, -- automatically make first window a tab group
+--             tabs = {
+--                 height = 22,
+--                 padding = 5,
+--                 padding_horizontal = -1, -- -1 uses padding
+--                 padding_outer = true,
+--                 from_top = false,
+--                 radius = 6,
+--                 border_width = 2,
+--                 render_text = true,
+--                 text_center = true,
+--                 text_font = "Sans",
+--                 text_height = 8,
+--                 text_padding = 3,
+--                 colors = {
+--                     active = "rgba(33ccff40)",
+--                     active_border = "rgba(33ccffee)",
+--                     active_text = "rgba(ffffffff)",
+--                     active_alt_monitor = "rgba(60606040)",
+--                     active_alt_monitor_border = "rgba(808080ee)",
+--                     active_alt_monitor_text = "rgba(ffffffff)",
+--                     focused = "rgba(60606040)",
+--                     focused_border = "rgba(808080ee)",
+--                     focused_text = "rgba(ffffffff)",
+--                     inactive = "rgba(30303020)",
+--                     inactive_border = "rgba(606060aa)",
+--                     inactive_text = "rgba(ffffffff)",
+--                     urgent = "rgba(ff223340)",
+--                     urgent_border = "rgba(ff2233ee)",
+--                     urgent_text = "rgba(ffffffff)",
+--                     locked = "rgba(90903340)",
+--                     locked_border = "rgba(909033ee)",
+--                     locked_text = "rgba(ffffffff)",
+--                 },
+--                 blur = true,
+--                 opacity = 1.0,
+--             },
+--             autotile = {
+--                 enable = false,
+--                 ephemeral_groups = true,
+--                 trigger_width = 0,  -- -1 never; 0 always; positive value is px threshold
+--                 trigger_height = 0, -- -1 never; 0 always; positive value is px threshold
+--                 -- workspaces = "1,2", -- optional workspace list; see upstream docs
+--             },
+--         },
+--     },
+-- })
+--
+-- hy3 Lua dispatcher factories (examples; add to your own bind section):
+-- local hy3 = hl.plugin.hy3
+-- hl.bind("SUPER + H", hy3.make_group("h", { toggle = true }))
+-- hl.bind("SUPER + V", hy3.make_group("v", { toggle = true }))
+-- hl.bind("SUPER + J", hy3.move_focus("d"))
+-- hl.bind("SUPER + K", hy3.move_focus("u"))
+-- hl.bind("SUPER + SHIFT + J", hy3.move_window("d"))
+-- hl.bind("SUPER + SHIFT + K", hy3.move_window("u"))
+--
+-- Layout requirement from README: set general.layout to "hy3" and use hy3's
+-- movefocus/movewindow dispatchers for normal operation.
+
+-- -----------------------------------------------------------------------------
+-- 02. Hyprwinwrap
+-- Repository: https://github.com/gen3vra/hyprwinwrap
+-- Config namespace: plugin.hyprwinwrap
+-- Docs: README.md -> Lua config equivalent
+-- NOTE: class is an exact match, not a regex. This example is for one window.
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         hyprwinwrap = {
+--             class = "window-bg", -- exact app-id/class of the background window
+--             title = "window-bg", -- optional title match
+--             pos_x = 0,            -- percentage of screen
+--             pos_y = 10,           -- percentage of screen
+--             size_x = 100,         -- percentage of screen
+--             size_y = 97,          -- leave room for a bottom bar
+--         },
+--     },
+-- })
+-- -- Focus/interactivity dispatcher documented by the project:
+-- -- hyprctl dispatch hyprwinwrap_interactivity
+
+-- -----------------------------------------------------------------------------
+-- 03. Hyprgrass
+-- Repository: https://github.com/horriblename/hyprgrass
+-- Config namespace: plugin.hyprgrass; gesture helpers: hl.plugin.hyprgrass
+-- Docs: docs/configuration.md
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         hyprgrass = {
+--             sensitivity = 1.0,
+--             long_press_delay = 400, -- milliseconds
+--             resize_on_border_long_press = true,
+--             edge_margin = 10,       -- pixels
+--         },
+--     },
+--     gestures = {
+--         workspace_swipe_touch = true,
+--         workspace_swipe_cancel_ratio = 0.15,
+--     },
+-- })
+--
+-- Gesture examples from the Lua documentation:
+-- hl.plugin.hyprgrass.gesture({
+--     pattern = { kind = "swipe", fingers = 3, direction = "down" },
+--     action = "close",
+-- })
+-- hl.plugin.hyprgrass.bind({
+--     pattern = { kind = "edge", origin = "d", direction = "l" },
+--     action = hl.dsp.focus({ workspace = "+1" }),
+-- })
+-- hl.plugin.hyprgrass.bind({
+--     pattern = { kind = "tap", fingers = 3 },
+--     action = hl.dsp.window.float(),
+-- })
+
+-- -----------------------------------------------------------------------------
+-- 04. split-monitor-workspaces
+-- Repository in catalogue: https://github.com/Duckonaut/split-monitor-workspaces
+-- Current Lua package documentation: https://github.com/zjeffer/split-monitor-workspaces
+-- Config namespace (legacy C++ plugin): plugin.split_monitor_workspaces
+-- Current Lua package API is loaded with require(), not just a plugin table.
+-- -----------------------------------------------------------------------------
+-- -- Legacy/plugin-table options documented by the project:
+-- hl.config({
+--     plugin = {
+--         split_monitor_workspaces = {
+--             count = 10,
+--             keep_focused = 0,
+--             enable_notifications = 0,
+--             enable_persistent_workspaces = 1,
+--             enable_wrapping = 1,
+--             monitor_priority = "DP-1, DP-2",
+--             -- max_workspaces = "DP-1:10", -- project documents per-monitor limits
+--             link_monitors = 0,
+--             enable_hy3 = 1,
+--         },
+--     },
+-- })
+--
+-- -- Current Hyprland 0.55+ Lua-package setup from the current README:
+-- package.path = package.path .. ";./?.lua;./?/init.lua"
+-- local smw = require("plugins.split-monitor-workspaces")
+-- -- Then use the package's documented smw API for binds/persistent workspaces.
+-- -- Do not mix the Lua-package API and the older C++ plugin settings blindly.
+
+-- -----------------------------------------------------------------------------
+-- 05. HyprEasymotion
+-- Repository: https://github.com/zakk4223/hyprland-easymotion
+-- HyprPM ID: hyprEasymotion
+-- Docs: README.md -> Configuration
+-- NOTE: README's example is legacy plugin-block syntax. The following is its
+-- Lua table equivalent; verify the option names against your installed commit.
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         hyprEasymotion = {
+--             motionlabels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+--             only_special = true,
+--         },
+--     },
+-- })
+-- -- Example dispatcher from README (adapt command/action to your workflow):
+-- -- hl.bind("SUPER + Z", function()
+-- --     hl.dispatch("easymotion")
+-- -- end)
+
+-- -----------------------------------------------------------------------------
+-- 06. hypr-dynamic-cursors
+-- Repository: https://github.com/VirtCode/hypr-dynamic-cursors
+-- Config namespace: plugin.dynamic_cursors
+-- Docs: README.md -> configuration
+-- NOTE: Upstream explicitly says to guard configuration when plugin is absent.
+-- -----------------------------------------------------------------------------
+-- if hl.plugin.dynamic_cursors then
+--     hl.config({
+--         plugin = {
+--             dynamic_cursors = {
+--                 enabled = true,
+--                 mode = "tilt", -- tilt, rotate, stretch, none
+--                 threshold = 2,
+--                 rotate = {
+--                     length = 20,
+--                     offset = 0.0,
+--                 },
+--                 tilt = {
+--                     limit = 5000,
+--                     activation = "negative_quadratic", -- linear, quadratic, negative_quadratic
+--                     window = 100,
+--                     full = 60,
+--                 },
+--                 stretch = {
+--                     limit = 3000,
+--                     activation = "quadratic",
+--                     window = 100,
+--                 },
+--                 shake = {
+--                     enabled = true,
+--                     threshold = 6.0,
+--                     base = 4.0,
+--                     speed = 4.0,
+--                     influence = 0.0,
+--                     limit = 0.0,
+--                     timeout = 2000,
+--                     effects = false,
+--                     ipc = false,
+--                 },
+--                 hyprcursor = {
+--                     -- Upstream documents additional texture-scaling options here;
+--                     -- add them from the README section matching your version.
+--                 },
+--             },
+--         },
+--     })
+-- end
+
+-- -----------------------------------------------------------------------------
+-- 07. hypr-edgehover
+-- Repository: https://github.com/gfhdhytghd/hypr-edgehover
+-- The repository's current public docs did not expose a verified Lua settings
+-- block during this pass. No option names are guessed here.
+-- -----------------------------------------------------------------------------
+-- -- Add the repository's documented Lua configuration here when available.
+
+-- -----------------------------------------------------------------------------
+-- 08. hymission
+-- Repository: https://github.com/gfhdhytghd/hymission
+-- Config namespace: plugin.hymission
+-- Docs: README.md -> Configuration
+-- NOTE: The project has a large and evolving option set. These are the
+-- documented Lua example values; consult the README for additional options.
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         hymission = {
+--             -- Layout geometry
+--             outer_padding_top = 32,
+--             outer_padding_right = 32,
+--             outer_padding_bottom = 32,
+--             outer_padding_left = 32,
+--             row_spacing = 32,
+--             column_spacing = 32,
+--             min_window_length = 120,
+--             min_preview_short_edge = 32,
+--             small_window_boost = 1.35,
+--             max_preview_scale = 0.95,
+--             workspace_overview_max_preview_scale = 0.95,
+--             min_slot_scale = 0.10,
+--             one_workspace_per_row = 0,
+--             -- Layout engines
+--             layout_engine = "natural",
+--             layout_engine_forceall = "",
+--             layout_engine_all = "",
+--             layout_engine_onlycurrentworkspace = "",
+--             layout_scale_weight = 1.0,
+--             layout_space_weight = 0.10,
+--             -- Scope and transitions
+--             multi_workspace_sort_recent_first = 1,
+--             only_active_workspace = 0,
+--             only_active_monitor = 0,
+--             show_special = 0,
+--             workspace_change_keeps_overview = 1,
+--             -- Hover and selection
+--             selected_expand_scale = 1.18,
+--             hover_expand_scale = 1.18,
+--             overview_focus_follows_mouse = 1,
+--             show_focus_indicator = 0,
+--             grouped_windows_policy = "expanded",
+--             grouped_windows_collapsed_labels = 1,
+--             grouped_windows_collapsed_scroll = 1,
+--             hover_relayout_animation = "",
+--             hover_relayout_duration = 140,
+--             hover_relayout_curve = "ease_out_cubic",
+--             -- Toggle and gestures
+--             toggle_switch_mode = 0,
+--             switch_toggle_auto_next = 1,
+--             switch_release_key = "Super_L",
+--             gesture_invert_vertical = 0,
+--             -- Niri-style mode
+--             niri_mode = 0,
+--             niri_scroll_pixels_per_delta = 1.0,
+--             niri_workspace_scale = 1.0,
+--             niri_scrolling_preview_gap = 24,
+--             -- Workspace strip
+--             workspace_strip_anchor = "left",
+--             workspace_strip_empty_mode = "existing",
+--             workspace_strip_thickness = 160,
+--             workspace_strip_gap = 24,
+--             workspace_strip_force_show = 0,
+--             workspace_strip_refresh_ms = 500,
+--             hide_bar_when_strip = 1,
+--             hide_hyprbars_during_overview = 0,
+--             hide_hyprglass_during_overview = 1,
+--             bar_single_mission_control = 0,
+--             hide_bar_animation = 1,
+--             hide_bar_animation_blur = 1,
+--             hide_bar_animation_move_multiplier = 0.8,
+--             hide_bar_animation_scale_divisor = 1.1,
+--             hide_bar_animation_alpha_end = 0,
+--             -- Label picking
+--             pick_labels_enabled = 0,
+--             pick_labels_show = 1,
+--             pick_labels_mode = "sequential",
+--             pick_labels_direct_activate = 0,
+--             -- Further options are in the project's README and docs/spec.md.
+--         },
+--     },
+-- })
+--
+-- -- Lua actions documented by the project:
+-- hl.bind("SUPER + TAB", hl.plugin.hymission.toggle)
+-- hl.bind("SUPER + SHIFT + TAB", function() hl.plugin.hymission.toggle("reverse") end)
+-- hl.bind("SUPER + CTRL + TAB", hl.plugin.hymission.close)
+-- hl.bind("SUPER + C", function() hl.plugin.hymission.toggle("onlycurrentworkspace") end)
+-- hl.bind("SUPER + A", function() hl.plugin.hymission.toggle("forceall") end)
+
+-- -----------------------------------------------------------------------------
+-- 09. HyprCapture
+-- Repository: https://github.com/gfhdhytghd/HyprCapture
+-- Config namespace: plugin.hyprcapture
+-- Docs: README.md -> Configuration (Lua API, Hyprland 0.56+)
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         hyprcapture = {
+--             default_mode = "region",
+--             fullscreen_scope = "all",
+--             overlay_scope = "fix",
+--             window_background = "follow-system",
+--             window_border = "keep",
+--             window_shadow = "keep",
+--             notification_backend = "hyprland",
+--             screenshot_notification = true,
+--             notification_title_template = "Screenshot captured",
+--             notification_body_template = "Saved {filename} ({window_title})",
+--             save = true,
+--             clipboard = true,
+--             show_thumbnail = true,
+--             remember_settings = false,
+--             allow_quick = false,
+--             confirm_before_capture = false,
+--             fusion_mode = false,
+--             capture_fullscreen_clients_as_monitor = false,
+--             dynamic_window_metadata = true,
+--             record_window_backend = "auto",
+--             record_max_seconds = 0,
+--             record_countdown_seconds = 0,
+--             include_cursor = false,
+--             thumbnail_timeout_ms = 5000,
+--             thumbnail_monitor = "active",
+--             watermark = "",
+--             watermark_position = "central",
+--             watermark_width = "20%",
+--             watermark_offset = "0 0",
+--             -- helper = os.getenv("HOME") .. "/.local/bin/hyprcapture-ui", -- default helper path
+--         },
+--     },
+-- })
+-- -- Lua action examples:
+-- hl.bind("SUPER + SHIFT + s", hl.plugin.hyprcapture.open)
+-- hl.bind("SUPER + SHIFT + w", function() hl.plugin.hyprcapture.open("window") end)
+-- hl.bind("SUPER + SHIFT + f", function() hl.plugin.hyprcapture.open("fullscreen") end)
+-- hl.bind("SUPER + CTRL + s", function() hl.plugin.hyprcapture.record_toggle() end)
+
+-- -----------------------------------------------------------------------------
+-- 10. hypr-kinetic-scroll
+-- Repository: https://github.com/savonovv/hypr-kinetic-scroll
+-- Legacy option namespace: plugin.kinetic-scroll; Lua helper namespace:
+-- hl.plugin.kinetic_scroll
+-- Docs: README.md -> Configuration / Per-App Rules
+-- -----------------------------------------------------------------------------
+-- -- Legacy config options shown by upstream README, represented as Lua table:
+-- hl.config({
+--     plugin = {
+--         ["kinetic-scroll"] = {
+--             enabled = 1,
+--             decel = 0.92,
+--             min_velocity = 0.5,
+--             interval_ms = 16,
+--             delta_multiplier = 1.25,
+--             disable_in_browser = 1,
+--             stop_on_target_change = 1,
+--             disabled_classes = "",
+--             debug = 0,
+--             stop_on_click = 0,
+--             stop_on_focus = 0,
+--         },
+--     },
+-- })
+-- -- Per-app Lua API:
+-- hl.plugin.kinetic_scroll.disable("org.telegram.desktop")
+-- hl.plugin.kinetic_scroll.disable("chromium")
+-- -- Or allow only selected apps:
+-- -- hl.plugin.kinetic_scroll.disable_default()
+-- -- hl.plugin.kinetic_scroll.enable("steam")
+-- -- hl.plugin.kinetic_scroll.enable_default()
+-- -- hl.plugin.kinetic_scroll.reset_rules()
+
+-- -----------------------------------------------------------------------------
+-- 11. gloview
+-- Repository: https://github.com/fedsfarm/gloview
+-- Config namespace: plugin.gloview
+-- Docs: README.md -> Configuration -> Lua
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         gloview = {
+--             layout = "rows",
+--             gap = 34,
+--             padding = 80,
+--             padding_top = 40,
+--             padding_bottom = 70,
+--             max_scale = 1.0,
+--             preview_filter = "box4",
+--             duration = 200,
+--             preview_round = 12,
+--             blur = 1,
+--             switch_animation = 1,
+--             switch_duration = 260,
+--             move_animation = 1,
+--             move_duration = 240,
+--             anchor = "top",
+--             strip_offset = 0,
+--             strip_height = 150,
+--             strip_margin = 22,
+--             strip_gap = 18,
+--             strip_card_round = 10,
+--             focus_follows_mouse = 1,
+--             scroll_switches_workspace = 1,
+--             passthrough_keys = 1,
+--             exit_on_click = 1,
+--             exit_on_switch = 0,
+--             key_close = "escape",
+--             key_next_workspace = "tab",
+--             key_prev_workspace = "shift+tab",
+--             key_activate = "enter",
+--             key_close_window = "d",
+--             key_left = "left",
+--             key_right = "right",
+--             key_up = "up",
+--             key_down = "down",
+--             key_desktop = "shift",
+--             key_all_workspaces = "a",
+--             key_workspace = "1,2,3,4,5,6,7,8,9,0",
+--             show_all_workspaces = 0,
+--             show_empty = 1,
+--             dynamic_workspaces = 1,
+--             autodelete_empty = 1,
+--             show_workspace_labels = 1,
+--             show_window_labels = 1,
+--             show_special = 0,
+--             strip_all_card = 1,
+--             drag_to_swap = 1,
+--             switch_on_drop = 0,
+--             switch_on_new_workspace = 1,
+--             hide_top_layers = 0,
+--             hide_overlay_layers = 0,
+--             above_namespaces = "",
+--             debug_logs = 0,
+--         },
+--     },
+-- })
+-- -- Lua bind examples from README:
+-- hl.bind("SUPER + TAB", hl.plugin.gloview.toggle)
+-- hl.bind("SUPER + SHIFT + TAB", hl.plugin.gloview.desktop)
+-- hl.bind("SUPER + CTRL + TAB", hl.plugin.gloview.allworkspaces)
+-- hl.bind("SUPER + bracketright", hl.plugin.gloview.next)
+-- hl.bind("SUPER + bracketleft", hl.plugin.gloview.prev)
+
+-- -----------------------------------------------------------------------------
+-- 12. confined-floats
+-- Repository: https://github.com/mennemann/hyprland-confined-floats
+-- No verified Lua configuration block/options were found in the repository
+-- documentation during this pass. Do not assume legacy dispatcher syntax works
+-- in a Lua config; check the README for the build/version you installed.
+-- -----------------------------------------------------------------------------
+-- -- Add documented Lua settings here if/when the project publishes them.
+
+-- -----------------------------------------------------------------------------
+-- 13. macos-zoom
+-- Repository: https://github.com/aastrand/hyprland-macos-zoom
+-- No verified Lua settings table was found in the repository docs during this
+-- pass. Keep any project-provided bind/dispatcher examples in your keybind file.
+-- -----------------------------------------------------------------------------
+-- -- Add documented Lua settings here if/when the project publishes them.
+
+-- -----------------------------------------------------------------------------
+-- 14. hyprNStack
+-- Repository: https://github.com/zakk4223/hyprNStack
+-- Config namespace: plugin.nstack.layout
+-- Docs: README.md -> Configuration
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         nstack = {
+--             layout = {
+--                 orientation = "left",
+--                 new_on_top = 0,
+--                 new_is_master = 1,
+--                 no_gaps_when_only = 0,
+--                 special_scale_factor = 0.8,
+--                 inherit_fullscreen = 1,
+--                 stacks = 2,
+--                 center_single_master = 0,
+--                 mfact = 0.5,
+--                 single_mfact = 0.5,
+--             },
+--         },
+--     },
+-- })
+-- -- Set general.layout = "nstack" when you choose to use this layout.
+-- -- Workspace rules can override options using nstack- prefixed layout options.
+
+-- -----------------------------------------------------------------------------
+-- 15. hyprland-virtual-desktops
+-- Repository: https://github.com/levnikmyskin/hyprland-virtual-desktops
+-- Config namespace: plugin.virtual_desktops
+-- Docs: README.md -> Configuration values / Lua config
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         virtual_desktops = {
+--             names = "1:coding, 2:internet, 3:mail and chats",
+--             cycleworkspaces = 0,
+--             cycle_populated_only = 1,
+--             rememberlayout = "size", -- none, size, monitors
+--             notifyinit = 1,
+--             verbose_logging = 0,
+--             monitor_order = "DP-2, DP-1, DP-3",
+--         },
+--     },
+-- })
+-- -- Example Lua binds:
+-- hl.bind("CTRL + ALT + Left", function() hl.plugin.virtual_desktops.prevdesk() end)
+-- hl.bind("CTRL + ALT + Right", function() hl.plugin.virtual_desktops.nextdesk() end)
+-- hl.bind("SUPER + 1", function() hl.plugin.virtual_desktops.vdesk("1") end)
+-- hl.bind("SUPER + SHIFT + 1", function() hl.plugin.virtual_desktops.movetodesk("1") end)
+
+-- -----------------------------------------------------------------------------
+-- 16. hyprRiver
+-- Repository: https://github.com/zakk4223/hyprRiver
+-- The repository's current README/configuration could not be verified as
+-- publishing a Lua settings block during this pass. No settings are invented.
+-- -----------------------------------------------------------------------------
+-- -- Add the upstream Lua configuration here if the installed revision provides it.
+
+-- -----------------------------------------------------------------------------
+-- 17. imgborders
+-- Repository: https://codeberg.org/zacoons/imgborders
+-- The repository documentation was not retrievable in a form that confirmed
+-- Lua option names. Keep this section as a source marker, not guessed settings.
+-- -----------------------------------------------------------------------------
+-- -- Add documented Lua settings here after checking the project's README.
+
+-- -----------------------------------------------------------------------------
+-- 18. Hypr-DarkWindow
+-- Repository: https://github.com/micha4w/Hypr-DarkWindow
+-- HyprPM plugin ID: Hypr-DarkWindow; Lua namespace: hl.plugin.darkwindow
+-- Docs: README.md -> Configuration -> Lua
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         darkwindow = {
+--             load_shaders = "all", -- e.g. "invert, tint"; empty string loads no built-ins
+--         },
+--     },
+-- })
+--
+-- if hl.plugin.darkwindow ~= nil then
+--     -- Define a new shader based on a built-in shader:
+--     hl.plugin.darkwindow.load_shader("tintRed", {
+--         from = "tint",
+--         args = "tintColor=[1 0 0] tintStrength=0.1",
+--         fade_in_speed = 3,  -- deciseconds
+--         fade_out_speed = 3,
+--     })
+--
+--     -- Custom shader example; path is relative to this Lua file if relative:
+--     hl.plugin.darkwindow.load_shader("customShader", {
+--         path = "~/path/to/shader.glsl",
+--         -- source = [[void windowShader(inout vec4 color) { color.r = 1.; }]],
+--         args = { wow = { 1.0, 0 } },
+--         introduces_transparency = true,
+--         fade_in_speed = 3,
+--         fade_out_speed = 3,
+--         animation_interval = 86400,
+--     })
+--     -- Apply shader using a window rule (example):
+--     -- hl.window_rule({ match = { class = "pb250.exe" }, ["darkwindow:shade"] = "invert" })
+-- end
+
+-- -----------------------------------------------------------------------------
+-- 19. hyprexpo — sandwichfarm fork
+-- Repository: https://github.com/sandwichfarm/hyprexpo
+-- HyprPM ID: hyprexpo; Config namespace: plugin.hyprexpo
+-- Docs: README.md -> Quick Config / configuration options
+-- NOTE: This and colonelpanic8's fork share the same HyprPM ID. Use only one.
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         hyprexpo = {
+--             columns = 3,
+--             rows = 0, -- 0 follows columns for a square grid
+--             gaps_in = 5,
+--             gaps_out = 0,
+--             bg_col = "rgb(111111)",
+--             workspace_method = "center current",
+--             dynamic_grid = 1,
+--             fill_gaps = 0,
+--             mru_sort = 0,
+--             show_workspace_names = 1,
+--             label_pos = "top_right",
+--             label_size = 48,
+--             wallpaper_bg = 1,
+--             drag_drop_enable = 1,
+--             show_pinned_windows = 1,
+--             number_key_mode = "workspace", -- workspace, index, passthrough
+--         },
+--     },
+-- })
+-- -- Toggle bind from README:
+-- hl.bind("SUPER + G", function() hl.plugin.hyprexpo.expo("toggle") end)
+
+-- -----------------------------------------------------------------------------
+-- 20. hyprexpo — colonelpanic8 fork
+-- Repository: https://github.com/colonelpanic8/hyprexpo
+-- HyprPM ID: hyprexpo; Config namespace: plugin.hyprexpo
+-- NOTE: This fork shares the same HyprPM ID as sandwichfarm/hyprexpo.
+-- The following settings are from this fork's own README and may differ from
+-- sandwichfarm's fork. Keep only the section matching the installed fork.
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         hyprexpo = {
+--             columns = 3,
+--             gap_size = 5,
+--             gap_size_outer = 0,
+--             bg_col = "rgb(111111)",
+--             workspace_method = "center current",
+--             skip_empty = false,
+--             max_workspace = 0,
+--             show_workspace_numbers = false,
+--             workspace_number_color = "rgb(ffffff)",
+--             window_icon_enable = false,
+--             window_icon_position = "bottom-right",
+--             window_icon_size = 32,
+--             label_enable = false,
+--             label_text_mode = "id",
+--             label_token_map = "",
+--             selection_label_enable = false,
+--             selection_label_token_map = "a,s,d,f,g,q,w,e,r,t,z,x,c,v,b",
+--             gesture_distance = 300,
+--             cancel_key = "escape",
+--         },
+--     },
+-- })
+-- -- Toggle bind:
+-- hl.bind("SUPER + G", function() hl.plugin.hyprexpo.expo("toggle") end)
+
+-- -----------------------------------------------------------------------------
+-- 21. Hyprspace
+-- Repository: https://github.com/KZDKM/Hyprspace
+-- Config namespace: plugin.overview (Hyprland 0.55+)
+-- Docs: README.md -> Lua Configuration
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         overview = {
+--             panelColor = "#1e1e2e",
+--             panelBorderColor = "#cba6f7",
+--             workspaceActiveBackground = "rgba(49, 50, 68, 0.8)",
+--             workspaceActiveBorder = "rgb(203, 166, 247)",
+--             onBottom = false,
+--             autoDrag = true,
+--             -- Add further options from the upstream README for your version.
+--         },
+--     },
+-- })
+-- -- Dispatchers documented by the project: overview:toggle / overview:open / overview:close
+-- -- Add "all" to target all monitors.
+
+-- -----------------------------------------------------------------------------
+-- 22. Hyprglass
+-- Repository: https://github.com/hyprnux/hyprglass
+-- Lua API: hl.plugin.hyprglass.config / layer / preset
+-- Docs: README.md -> Configuration -> Lua config
+-- NOTE: Plugin must be loaded before these calls; use a guard.
+-- -----------------------------------------------------------------------------
+-- if hl.plugin.hyprglass then
+--     local hg = hl.plugin.hyprglass
+--     hg.config({
+--         enabled = true,
+--         manage_window_blur = true,
+--         skip_opaque_windows = true,
+--         blur_fold = true,
+--         default_theme = "dark",
+--         default_preset = "clear",
+--         tint_color = 0x8899aa22,
+--         brightness = 0.9,
+--         blur_strength = 2.0,
+--         blur_iterations = 3,
+--         noise_strength = 0.0,
+--         edge_thickness = 0.0,
+--         edge_thickness_px = 0,
+--         edge_height = 0,
+--         fresnel_reflection = 0,
+--         focus_light = 0,
+--         layers = { enabled = true },
+--     })
+--     -- Built-in presets include subtle, clear, glass, pomme.
+--     hg.preset("clear", {
+--         glass_opacity = 0.8,
+--         blur_strength = 1.5,
+--         inherits = "subtle",
+--         dark = { brightness = 0.7 },
+--         light = { brightness = 1.2 },
+--     })
+--     -- Each layer() call whitelists/configures that layer namespace:
+--     hg.layer("waybar", { preset = "subtle", mask_threshold = 0.05 })
+--     hg.layer("swaync")
+--     hg.layer("debug-panel", { exclude = true })
+-- end
+
+-- -----------------------------------------------------------------------------
+-- 23. scrolloverview
+-- Repository: https://github.com/yayuuu/hyprland-scroll-overview
+-- Config namespace: plugin.scrolloverview
+-- Docs: README.md -> Configuration -> Lua
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         scrolloverview = {
+--             gesture_distance = 300,
+--             scale = 0.5,
+--             workspace_gap = 100,
+--             layout = "vertical", -- vertical, horizontal, auto
+--             wallpaper = 2,        -- 0 global; 1 per-workspace; 2 both
+--             blur = true,
+--             shadow = {
+--                 enabled = true,
+--                 range = 50,
+--             },
+--             cross_monitor_drag = false,
+--         },
+--     },
+-- })
+-- hl.bind("SUPER + G", function()
+--     hl.plugin.scrolloverview.overview("toggle all")
+-- end)
+
+-- -----------------------------------------------------------------------------
+-- 24. HyprWindowShade
+-- Repository: https://github.com/ManofJELLO/HyprWindowShade
+-- Lua API: hl.plugin.HyprWindowShade
+-- Docs: README.md is written for Hyprland Lua config; GLSL shaders are separate
+-- files. These are rule/API examples, not plugin.hl.config options.
+-- -----------------------------------------------------------------------------
+-- -- Example shader path (create the GLSL file separately):
+-- local dim_shader = os.getenv("HOME") .. "/.config/hypr/shaders/dim.glsl"
+-- -- Window rule example:
+-- hl.window_rule({
+--     name = "kitty-dim",
+--     match = { class = "kitty" },
+--     tag = "+shader:" .. dim_shader,
+-- })
+-- -- Apply shader to a layer namespace at startup:
+-- hl.on("hyprland.start", function()
+--     hl.plugin.HyprWindowShade.layershader("mpvpaper", dim_shader)
+-- end)
+-- -- Example keybinds:
+-- hl.bind("SUPER + W", function()
+--     hl.plugin.HyprWindowShade.togglewindowshader(dim_shader)
+-- end)
+-- hl.bind("SUPER + R", function()
+--     hl.plugin.HyprWindowShade.reloadshaders()
+-- end)
+-- -- Other documented APIs: classshader, toggleclassshader, layershader,
+-- -- togglelayershader, layeropenanim, layercloseanim, reloadshaders.
+
+-- -----------------------------------------------------------------------------
+-- 25. hyprliquid
+-- Repository: https://github.com/zaregototsukai/hyprliquid
+-- The repository's current Lua configuration/options were not verified during
+-- this pass. No guessed plugin table is included.
+-- -----------------------------------------------------------------------------
+-- -- Add the upstream Lua settings here after checking the installed revision.
+
+-- =============================================================================
+-- OFFICIAL HYPRLAND PLUGINS (hyprwm/hyprland-plugins)
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- 26. borders-plus-plus
+-- Repository: https://github.com/hyprwm/hyprland-plugins
+-- The official repository documents plugin-specific configuration in its
+-- subdirectory README. No verified Lua option example was available in this
+-- research pass; do not copy a guessed table into hl.config.
+-- -----------------------------------------------------------------------------
+-- -- See: https://github.com/hyprwm/hyprland-plugins/tree/main/borders-plus-plus
+
+-- -----------------------------------------------------------------------------
+-- 27. hyprbars
+-- Repository: https://github.com/hyprwm/hyprland-plugins
+-- Config namespace: plugin.hyprbars; buttons: hl.plugin.hyprbars.add_button
+-- Docs: hyprbars/README.md -> Lua config
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         hyprbars = {
+--             enabled = true,
+--             bar_color = "rgb(202020)",
+--             bar_height = 20,
+--             bar_blur = false,
+--             col = { text = "rgb(ffffff)" },
+--             bar_title_enabled = true,
+--             inactive_button_color = "rgb(555555)",
+--             on_double_click = "hyprctl dispatch fullscreen 1",
+--         },
+--     },
+-- })
+-- -- Buttons are registered through the plugin Lua API, after it is loaded:
+-- if hl.plugin.hyprbars then
+--     hl.plugin.hyprbars.add_button({
+--         bg_color = "rgb(ff4040)",
+--         fg_color = "rgb(ffffff)",
+--         size = 10,
+--         icon = "X",
+--         action = "hyprctl dispatch 'hl.dsp.window.close()'",
+--     })
+--     hl.plugin.hyprbars.add_button({
+--         bg_color = "rgb(eeee11)",
+--         fg_color = "rgb(000000)",
+--         size = 10,
+--         icon = "_",
+--         action = [[hyprctl dispatch 'hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" })']],
+--     })
+-- end
+
+-- -----------------------------------------------------------------------------
+-- 28. hyprtrails
+-- Repository listed in catalogue: https://github.com/hyprwm/hyprland-plugins
+-- IMPORTANT: The current official hyprland-plugins manifest lists only
+-- borders-plus-plus, csgo-vulkan-fix, hyprbars and hyprfocus. It does not list
+-- hyprtrails, so this catalogue entry does not currently map to that manifest.
+-- No official Lua settings are supplied here.
+-- -----------------------------------------------------------------------------
+-- -- Verify a separate compatible hyprtrails repository/build before configuring.
+
+-- -----------------------------------------------------------------------------
+-- 29. hyprfocus
+-- Repository: https://github.com/hyprwm/hyprland-plugins
+-- Official description: Flashfocus for Hyprland.
+-- No verified Lua settings block was available in the official README during
+-- this pass; see its subdirectory README for version-specific options.
+-- -----------------------------------------------------------------------------
+-- -- See: https://github.com/hyprwm/hyprland-plugins/tree/main/hyprfocus
+
+-- -----------------------------------------------------------------------------
+-- 30. csgo-vulkan-fix
+-- Repository: https://github.com/hyprwm/hyprland-plugins
+-- Official description: fixes incorrect mouse offsets for CS:GO in Vulkan mode.
+-- No user-facing Lua configuration options are documented in the official
+-- plugin repository; it is a behavior/fix plugin rather than a settings module.
+-- -----------------------------------------------------------------------------
+-- -- No Lua settings block documented by upstream.
+
+-- -----------------------------------------------------------------------------
+-- 31. hypr-hot-edge
+-- Repository: https://github.com/claychinasky/hypr-hot-edge
+-- Upstream README documents the options in Hyprlang. The values below preserve
+-- the documented option names in a Lua plugin table; verify that the exact
+-- installed build accepts this Lua translation before uncommenting.
+-- -----------------------------------------------------------------------------
+-- hl.config({
+--     plugin = {
+--         ["hot-edge"] = {
+--             corner_margin = 10,
+--             edge1 = {
+--                 enabled = 1,
+--                 side = "right", -- left/right/top/bottom/topleft/topright/bottomleft/bottomright
+--                 trigger_width = 15,
+--                 dwell_time = 150,
+--                 special_workspace = "hotedge-right-mon1",
+--                 target_monitor = "*",
+--                 hide_on_leave = 1,
+--             },
+--             -- Duplicate edge slots as edge2, edge3 ... edge16 as needed.
+--         },
+--     },
+-- })
+
+-- =============================================================================
+-- EXTERNAL / COMPANION TOOL (not a HyprPM shared-object plugin)
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- 32. Pyprland
+-- Repository: https://github.com/hyprland-community/pyprland
+-- IMPORTANT: Pyprland uses ~/.config/pypr/config.toml, not Hyprland Lua.
+-- The following is TOML for pypr/config.toml and is intentionally commented
+-- here only as a reference. Do not uncomment these lines in a Lua file.
+-- -----------------------------------------------------------------------------
+-- [pyprland]
+-- plugins = ["scratchpads", "magnify", "expose"]
+-- notification_type = "auto"
+--
+-- [scratchpads.term]
+-- command = "kitty --class kitty-dropterm"
+-- class = "kitty-dropterm"
+-- size = "75% 60%"
+--
+-- Lua-side bind examples documented by Pyprland:
+-- local pypr = "/usr/bin/pypr-client"
+-- hl.bind(mainMod .. " + A", hl.dsp.exec_cmd(pypr .. " toggle term"))
+-- hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(pypr .. " expose"))
+-- hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd(pypr .. " zoom"))
+
+-- =============================================================================
+-- END OF FILE
+-- =============================================================================

@@ -1,0 +1,32 @@
+hy3|hy3|https://github.com/outfoxxed/hy3|hy3|hyprpm
+hyprwinwrap|Hyprwinwrap|https://github.com/gen3vra/hyprwinwrap|hyprwinwrap|hyprpm
+hyprgrass|hyprgrass|https://github.com/horriblename/hyprgrass|hyprgrass|hyprpm
+split-monitor-workspaces|split-monitor-workspaces|https://github.com/Duckonaut/split-monitor-workspaces|split-monitor-workspaces|hyprpm
+hyprland-easymotion|hyprland-easymotion|https://github.com/zakk4223/hyprland-easymotion|hyprEasymotion|hyprpm
+hypr-dynamic-cursors|hypr-dynamic-cursors|https://github.com/VirtCode/hypr-dynamic-cursors|dynamic-cursors|hyprpm
+hypr-edgehover|hypr-edgehover|https://github.com/gfhdhytghd/hypr-edgehover|hypr-edgehover|hyprpm
+hymission|hymission|https://github.com/gfhdhytghd/hymission|hymission|hyprpm
+hyprcapture|hyprcapture|https://github.com/gfhdhytghd/HyprCapture|hyprcapture|hyprpm
+hypr-kinetic-scroll|hypr-kinetic-scroll|https://github.com/savonovv/hypr-kinetic-scroll|hypr-kinetic-scroll|hyprpm
+gloview|gloview|https://github.com/fedsfarm/gloview|gloview|hyprpm
+confined-floats|confined-floats|https://github.com/mennemann/hyprland-confined-floats|confined-floats|hyprpm
+macos-zoom|macos-zoom|https://github.com/aastrand/hyprland-macos-zoom|macos-zoom|hyprpm
+hyprNStack|hyprNStack|https://github.com/zakk4223/hyprNStack|hyprNStack|hyprpm
+hyprland-virtual-desktops|hyprland-virtual-desktops|https://github.com/levnikmyskin/hyprland-virtual-desktops|hyprland-virtual-desktops|hyprpm
+hyprRiver|hyprRiver|https://github.com/zakk4223/hyprRiver|hyprRiver|hyprpm
+borders-plus-plus|Borders++|https://github.com/hyprwm/hyprland-plugins|borders-plus-plus|hyprpm
+imgborders|Image borders|https://codeberg.org/zacoons/imgborders|imgborders|hyprpm
+hyprbars|Hyprbars|https://github.com/hyprwm/hyprland-plugins|hyprbars|hyprpm
+hyprtrails|Hyprtrails|https://github.com/hyprwm/hyprland-plugins|hyprtrails|hyprpm
+hyprfocus|Hyprfocus|https://github.com/hyprwm/hyprland-plugins|hyprfocus|hyprpm
+hypr-darkwindow|hypr-darkwindow|https://github.com/micha4w/Hypr-DarkWindow|Hypr-DarkWindow|hyprpm
+hyprexpo-sandwichfarm|sandwichfarm/hyprexpo|https://github.com/sandwichfarm/hyprexpo|hyprexpo|hyprpm
+hyprexpo-colonelpanic8|colonelpanic8/hyprexpo|https://github.com/colonelpanic8/hyprexpo|hyprexpo|hyprpm
+hyprspace|hyprspace|https://github.com/KZDKM/Hyprspace|hyprspace|hyprpm
+hyprglass|Hyprglass|https://github.com/hyprnux/hyprglass|hyprglass|hyprpm
+scrolloverview|scrolloverview|https://github.com/yayuuu/hyprland-scroll-overview|scrolloverview|hyprpm
+HyprWindowShade|HyprWindowShade|https://github.com/ManofJELLO/HyprWindowShade|HyprWindowShade|hyprpm
+hyprliquid|hyprliquid|https://github.com/zaregototsukai/hyprliquid|hyprliquid|hyprpm
+pyprland|pyprland|https://github.com/hyprland-community/pyprland||external
+csgo-vulkan-fix|CSGO Vulkan Fix|https://github.com/hyprwm/hyprland-plugins|csgo-vulkan-fix|hyprpm
+hypr-hot-edge|hypr-hot-edge|https://github.com/claychinasky/hypr-hot-edge|hypr-hot-edge|hyprpm
