@@ -98,3 +98,11 @@ hl.window_rule({
     pin = true,
     opaque = false,
 })
+
+hl.window_rule({
+    name = "hypr-autostart",
+    match = { class = "hypr-autostart" },
+    float = true,
+    center = true,
+    size = "900 600",
+})
