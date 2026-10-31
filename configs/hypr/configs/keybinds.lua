@@ -59,7 +59,8 @@ hl.bind(mainMod .. " + SHIFT + F",
 )
 hl.bind(mainMod .. " + SHIFT + P",
     hl.dsp.exec_cmd("kitty --class hyprpm-plugins -e ~/.config/hypr/scripts/hypr-plugins.sh"))
-
+hl.bind(mainMod .. " + SHIFT + K",
+    hl.dsp.exec_cmd("kitty --class hypr-keybinds -e ~/.config/hypr/scripts/keybind-editor.sh"))
 -- ── Window ────────────────────────────────────────────────
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + ALT + V",

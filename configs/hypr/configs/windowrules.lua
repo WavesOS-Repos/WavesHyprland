@@ -70,6 +70,14 @@ hl.window_rule({
 })
 
 hl.window_rule({
+    name = "hypr-keybinds",
+    match = { class = "hypr-keybinds" },
+    float = true,
+    center = true,
+    size = "1000 650",
+})
+
+hl.window_rule({
     name  = "hyprpm-plugins",
     match = { class = "hyprpm-plugins" },
     float = true,
