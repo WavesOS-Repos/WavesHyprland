@@ -111,7 +111,6 @@
 -- })
 -- -- Focus/interactivity dispatcher documented by the project:
 -- -- hyprctl dispatch hyprwinwrap_interactivity
-
 -- -----------------------------------------------------------------------------
 -- 03. Hyprgrass
 -- Repository: https://github.com/horriblename/hyprgrass

@@ -31,7 +31,7 @@
 }
 {
   "label": "shutdown",
-  "action": "systemctl poweroff",
+  "action": "~/.config/hypr/scripts/shutdown-sound.sh",
   "text": "Shutdown",
   "keybind": "p"
 }

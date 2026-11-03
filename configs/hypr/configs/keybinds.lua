@@ -63,6 +63,8 @@ hl.bind(mainMod .. " + SHIFT + K",
     hl.dsp.exec_cmd("kitty --class hypr-keybinds -e ~/.config/hypr/scripts/keybind-editor.sh"))
 hl.bind(mainMod .. " + SHIFT + A",
     hl.dsp.exec_cmd("kitty --class hypr-autostart -e ~/.config/hypr/scripts/autostart-editor.sh"))
+hl.bind(mainMod .. " + N",
+    hl.dsp.exec_cmd("swaync-client -t"))
 -- ── Window ────────────────────────────────────────────────
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + ALT + V",
