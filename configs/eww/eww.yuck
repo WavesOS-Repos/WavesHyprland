@@ -157,3 +157,50 @@
 (defpoll rock_day  :interval "30s" `date +%A | tr '[:lower:]' '[:upper:]'`)
 (defpoll rock_date :interval "30s" `date '+%B %d %Y'`)
 (defpoll rock_time :interval "1s"  `date '+- %I:%M %p -'`)
+
+;; ===================== AUDIO-VISUALIZER =====================
+
+(deflisten wave_path
+  :initial "/tmp/eww-waveform/initial.svg"
+  `~/.config/eww/scripts/audio-wave.py`)
+
+(defwindow audio-wave
+  :monitor 0
+  :geometry (geometry
+    :x "0"
+    :y "-50"
+    :width "100%"
+    :height "0px"
+    :anchor "bottom center")
+  :stacking "bg"
+  :exclusive false
+  :focusable false
+  :namespace "visualizer"
+  (image
+    :path {wave_path}
+    :image-width 1920
+    :image-height 300
+    :class "audio-wave"))
+;; ===================== VERTICAL AUDIO VISUALIZER =====================
+
+(deflisten wave_vertical_path
+  :initial "/tmp/eww-waveform-vertical/initial.svg"
+  `~/.config/eww/scripts/audio-wave-vertical.py`)
+
+(defwindow visualizer-vertical
+  :monitor 0
+  :geometry (geometry
+    :x "-160"
+    :y "0"
+    :width "300px"
+    :height "1080px"
+    :anchor "right center")
+  :stacking "bg"
+  :exclusive false
+  :focusable false
+  :namespace "visualizer-vertical"
+  (image
+    :path {wave_vertical_path}
+    :image-width 300
+    :image-height 1080
+    :class "audio-wave-vertical"))

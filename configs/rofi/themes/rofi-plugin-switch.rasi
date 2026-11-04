@@ -13,7 +13,7 @@ configuration {
     me-accept-entry:       "MousePrimary";
     window-format:         "{w} · {c} · {t}";
 	dpi:					1;
-    
+    kb-accept-alt: "space";    
 }
 
 /* ---- Load pywal colors (custom wal template) ---- */
