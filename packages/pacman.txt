@@ -59,3 +59,4 @@ layer-shell-qt
 hyprpm
 awww
 ffmpeg
+socat
