@@ -44,6 +44,7 @@ thunar
 thunar-archive-plugin
 thunar-volman
 ttf-jetbrains-mono-nerd
+ttf-roboto
 tumbler
 unzip
 waybar
