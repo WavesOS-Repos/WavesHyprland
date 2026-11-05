@@ -7,8 +7,10 @@ CACHE="${HYPR}/.cache"
 SCRIPTS="${HYPR}/scripts"
 EWW="${CONFIG_DIR}/eww"
 CAVA="${CONFIG_DIR}/cava"
+FONT_DIR="${USER_HOME}/.local/share/fonts/wavesos"
+FONT_DIR_ALT="${USER_HOME}/.fonts"
 
-mkdir -p "$CACHE" "$EWW/scripts" "$CAVA" "${USER_HOME}/.local/share/fonts/wavesos" "${USER_HOME}/.cache"
+mkdir -p "$CACHE" "$EWW/scripts" "$CAVA" "$FONT_DIR" "$FONT_DIR_ALT" "${USER_HOME}/.cache"
 
 [[ -d "$SCRIPTS" ]] && chmod +x "$SCRIPTS"/*.sh 2>/dev/null || true
 [[ -d "$EWW/scripts" ]] && chmod +x "$EWW/scripts"/* 2>/dev/null || true
@@ -58,11 +60,23 @@ rm -f "${KITTY}/"*theme.auto.conf 2>/dev/null || true
 WALL_SRC="$ROOT/assets/default_wallpaper.png"
 [[ -f "$WALL_SRC" ]] && cp -f "$WALL_SRC" "${CACHE}/current_wallpaper.png" || true
 
-# Bundle optional fonts from repo if present
+# --- Fonts (Rock / EWW): Anurati, Chilanka, etc. from assets/fonts ---
 if [[ -d "$ROOT/assets/fonts" ]]; then
-  cp -a "$ROOT/assets/fonts/." "${USER_HOME}/.local/share/fonts/wavesos/" 2>/dev/null || true
+  cp -a "$ROOT/assets/fonts/." "$FONT_DIR/" 2>/dev/null || true
+  cp -a "$ROOT/assets/fonts/." "$FONT_DIR_ALT/" 2>/dev/null || true
 fi
-command -v fc-cache &>/dev/null && fc-cache -f >/dev/null 2>&1 || true
+if [[ -n "${SUDO_USER:-}" ]]; then
+  chown -R "${SUDO_USER}:${SUDO_USER}" "$FONT_DIR" "$FONT_DIR_ALT" 2>/dev/null || true
+fi
+if command -v fc-cache &>/dev/null; then
+  fc-cache -f "${USER_HOME}/.local/share/fonts" >/dev/null 2>&1 || true
+  fc-cache -f "${USER_HOME}/.fonts" >/dev/null 2>&1 || true
+  fc-cache -f >/dev/null 2>&1 || true
+fi
+if command -v fc-list &>/dev/null; then
+  fc-list 2>/dev/null | grep -qi Anurati || warn "Anurati not found — add assets/fonts/Anurati.otf"
+  fc-list 2>/dev/null | grep -qi Chilanka || warn "Chilanka not found — add assets/fonts/Chilanka-Regular.ttf"
+fi
 
 # Cava config for EWW visualizers
 if [[ ! -f "${CAVA}/eww-cava.conf" ]]; then
