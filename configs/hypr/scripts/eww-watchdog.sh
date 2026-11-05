@@ -1,20 +1,23 @@
 #!/usr/bin/env bash
 # EWW startup + wallpaper-change watchdog
-# Restores the widget chosen by eww-widget.sh (not always antares)
+# Restores main widget + optional visualizer (never forces a visualizer)
 set -u
 
 WIDGET_SH="${HOME}/.config/hypr/scripts/eww-widget.sh"
-STATE_FILE="${HOME}/.config/eww/active-widget"
+STATE_MAIN="${HOME}/.config/eww/active-widget"
+STATE_VIS="${HOME}/.config/eww/active-visualizer"
 
 sleep 2
 
-# Default once if never set
-if [[ ! -f "$STATE_FILE" ]]; then
-    mkdir -p "$(dirname "$STATE_FILE")"
-    echo "antares" > "$STATE_FILE"
+if [[ ! -f "$STATE_MAIN" ]]; then
+    mkdir -p "$(dirname "$STATE_MAIN")"
+    echo "antares" > "$STATE_MAIN"
+fi
+if [[ ! -f "$STATE_VIS" ]]; then
+    mkdir -p "$(dirname "$STATE_VIS")"
+    echo "none" > "$STATE_VIS"
 fi
 
-# Startup: daemon + saved widget
 bash "$WIDGET_SH" --ensure
 
 get_wallpaper_state() {
@@ -32,15 +35,25 @@ while true; do
     if [[ "$current_state" != "$last_state" ]]; then
         last_state="$current_state"
         sleep 3
-        # Re-open saved widget only if it disappeared
         bash "$WIDGET_SH" --ensure
         last_state="$(get_wallpaper_state)"
     fi
 
-    # Also recover if user/session killed the open widget
-    active="$(cat "$STATE_FILE" 2>/dev/null || echo none)"
-    if [[ "$active" != "none" && -n "$active" ]]; then
-        if ! eww active-windows 2>/dev/null | grep -q "^${active}"; then
+    # Recover main if it died
+    main="$(cat "$STATE_MAIN" 2>/dev/null || echo none)"
+    if [[ "$main" != "none" && -n "$main" ]]; then
+        if ! eww active-windows 2>/dev/null | grep -qE "(^|,)${main}(,|$)|^${main}"; then
+            # fallback match: window name present
+            if ! eww active-windows 2>/dev/null | grep -q "${main}"; then
+                bash "$WIDGET_SH" --ensure
+            fi
+        fi
+    fi
+
+    # Recover visualizer only if user enabled one
+    vis="$(cat "$STATE_VIS" 2>/dev/null || echo none)"
+    if [[ "$vis" != "none" && -n "$vis" ]]; then
+        if ! eww active-windows 2>/dev/null | grep -q "${vis}"; then
             bash "$WIDGET_SH" --ensure
         fi
     fi

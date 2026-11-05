@@ -1,0 +1,59 @@
+{
+  "positionX": "right",
+  "positionY": "top",
+  "layer": "overlay",
+  "control-center-layer": "overlay",
+  "layer-shell": true,
+  "cssPriority": "user",
+  "control-center-width": 400,
+  "control-center-margin-top": 6,
+  "control-center-margin-bottom": 6,
+  "control-center-margin-right": 6,
+  "control-center-margin-left": 0,
+  "fit-to-screen": true,
+  "timeout": 8,
+  "timeout-low": 4,
+  "timeout-critical": 0,
+  "hide-on-clear": true,
+  "hide-on-action": true,
+  "keyboard-shortcuts": true,
+  "widgets": [
+    "mpris",
+    "title",
+    "volume",
+    "backlight",
+    "notifications",
+    "buttons-grid"
+  ],
+  "widget-config": {
+    "title": {
+      "text": "Notifications",
+      "clear-all-button": true,
+      "button-text": "Clear"
+    },
+    "mpris": {
+      "image-size": 72,
+      "image-radius": 12
+    },
+    "scripts": {
+      "
+    "volume": {
+      "label": "",
+      "step": 5
+    },
+    "backlight": {
+      "label": "󰃞",
+      "step": 5
+    },
+    "buttons-grid": {
+      "actions": [
+        { "label": "", "command": "kitty -e nmtui", "tooltip": "Network" },
+        { "label": "", "command": "blueman-manager", "tooltip": "Bluetooth" },
+        { "label": "󰂛", "command": "swaync-client -d", "type": "toggle", "tooltip": "DND" },
+        { "label": "", "command": "hyprlock", "tooltip": "Lock" },
+        { "label": "󰜉", "command": "systemctl reboot", "tooltip": "Reboot" },
+        { "label": "⏻", "command": "systemctl poweroff", "tooltip": "Power Off" }
+      ]
+    }
+  }
+}

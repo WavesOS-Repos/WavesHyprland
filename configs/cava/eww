@@ -1,0 +1,6 @@
+[output]
+method = raw
+raw_target = /tmp/cava.fifo
+bit_format = 8bit
+channels = mono
+bars = 48

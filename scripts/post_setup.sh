@@ -5,11 +5,16 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/common.sh"
 HYPR="${CONFIG_DIR}/hypr"
 CACHE="${HYPR}/.cache"
 SCRIPTS="${HYPR}/scripts"
+EWW="${CONFIG_DIR}/eww"
+CAVA="${CONFIG_DIR}/cava"
 
-mkdir -p "$CACHE"
+mkdir -p "$CACHE" "$EWW/scripts" "$CAVA" "${USER_HOME}/.local/share/fonts/wavesos" "${USER_HOME}/.cache"
+
 [[ -d "$SCRIPTS" ]] && chmod +x "$SCRIPTS"/*.sh 2>/dev/null || true
+[[ -d "$EWW/scripts" ]] && chmod +x "$EWW/scripts"/* 2>/dev/null || true
 [[ -f "${CONFIG_DIR}/qylock/sddm.sh" ]] && chmod +x "${CONFIG_DIR}/qylock/sddm.sh" 2>/dev/null || true
 
+# Matugen seed
 MC="${HYPR}/matugen-colors.lua"
 if [[ ! -f "$MC" ]]; then
   cat > "$MC" << 'LUA'
@@ -21,6 +26,7 @@ return {
 LUA
 fi
 
+# Kitty colors seed
 KITTY="${CONFIG_DIR}/kitty"
 mkdir -p "$KITTY"
 if [[ ! -f "${KITTY}/colors-matugen.conf" ]]; then
@@ -48,15 +54,55 @@ KIT
 fi
 rm -f "${KITTY}/"*theme.auto.conf 2>/dev/null || true
 
+# Default wallpaper cache
 WALL_SRC="$ROOT/assets/default_wallpaper.png"
 [[ -f "$WALL_SRC" ]] && cp -f "$WALL_SRC" "${CACHE}/current_wallpaper.png" || true
 
+# Bundle optional fonts from repo if present
+if [[ -d "$ROOT/assets/fonts" ]]; then
+  cp -a "$ROOT/assets/fonts/." "${USER_HOME}/.local/share/fonts/wavesos/" 2>/dev/null || true
+fi
 command -v fc-cache &>/dev/null && fc-cache -f >/dev/null 2>&1 || true
+
+# Cava config for EWW visualizers
+if [[ ! -f "${CAVA}/eww-cava.conf" ]]; then
+  cat > "${CAVA}/eww-cava.conf" << 'CAVA'
+[general]
+framerate = 12
+bars = 48
+autosens = 1
+sensitivity = 100
+
+[input]
+method = pulse
+
+[output]
+method = ascii
+ascii_max_range = 100
+channels = mono
+CAVA
+fi
+
+# Initial SVGs so EWW image widgets have a path
+mkdir -p /tmp/eww-waveform /tmp/eww-waveform-vertical
+printf '%s\n' '<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="300"></svg>' \
+  > /tmp/eww-waveform/initial.svg
+printf '%s\n' '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="1080"></svg>' \
+  > /tmp/eww-waveform-vertical/initial.svg
+
+# EWW state defaults
+[[ -f "${EWW}/active-widget" ]] || echo "fuyue" > "${EWW}/active-widget"
+[[ -f "${EWW}/active-visualizer" ]] || echo "none" > "${EWW}/active-visualizer"
+
+# Weather (Open-Meteo → weather-om.json) — no API key
+if [[ -x "${EWW}/scripts/weather-fetch.sh" ]]; then
+  bash "${EWW}/scripts/weather-fetch.sh" >/dev/null 2>&1 || true
+elif [[ -f "${EWW}/scripts/weather-fetch.sh" ]]; then
+  bash "${EWW}/scripts/weather-fetch.sh" >/dev/null 2>&1 || true
+fi
 
 pkill -x waybar 2>/dev/null || true
 
-# Old theme-switch.sh: no args = toggle only.
-# Assume install left dark → toggle twice → dark→light→dark.
 THEME_SWITCH="${SCRIPTS}/theme-switch.sh"
 if [[ -f "$THEME_SWITCH" ]]; then
   echo dark > "${CACHE}/.theme_mode"
@@ -71,4 +117,12 @@ pkill -x waybar 2>/dev/null || true
 
 if command -v hyprctl &>/dev/null; then
   hyprctl reload >/dev/null 2>&1 || true
+fi
+
+# Warm EWW daemon (does not force visualizer)
+if command -v eww &>/dev/null; then
+  eww daemon >/dev/null 2>&1 || true
+  if [[ -x "${SCRIPTS}/eww-widget.sh" ]]; then
+    bash "${SCRIPTS}/eww-widget.sh" --ensure >/dev/null 2>&1 || true
+  fi
 fi

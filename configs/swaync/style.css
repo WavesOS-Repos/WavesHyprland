@@ -1,0 +1,176 @@
+/* Transparent shell — blur shows through */
+window,
+.blank-window,
+.control-center-window {
+  background: transparent;
+  background-color: transparent;
+}
+
+@define-color theme_fg rgba(248, 248, 252, 0.98);
+@define-color theme_fg_secondary rgba(215, 220, 225, 0.75);
+@define-color theme_bg rgba(20, 22, 28, 0.55);      /* frosted, not solid, not 0.2 */
+@define-color popup_bg rgba(20, 22, 28, 0.72);
+@define-color module_bg rgba(255, 255, 255, 0.06);
+@define-color module_hover_bg rgba(255, 255, 255, 0.10);
+@define-color button_bg rgba(255, 255, 255, 0.08);
+@define-color button_hover_bg rgba(255, 255, 255, 0.14);
+@define-color accent_color rgba(10, 132, 255, 0.85);
+@define-color accent_color_hover #198de5;
+@define-color border_light rgba(255, 255, 255, 0.14);
+@define-color border_medium rgba(255, 255, 255, 0.08);
+@define-color slider_trough_bg rgba(255, 255, 255, 0.12);
+@define-color slider_thumb_bg white;
+@define-color mpris_player_bg rgba(0, 0, 0, 0.35);
+
+* {
+  font-family: "Inter", "JetBrainsMono Nerd Font", sans-serif;
+  font-size: 14px;
+  color: @theme_fg;
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  text-shadow: none;
+  outline: none;
+}
+
+/* Full-height frosted column */
+.control-center {
+  background-color: @theme_bg;
+  border: 1px solid @border_light;
+  border-radius: 20px;
+  padding: 16px;
+  margin: 0;
+  min-width: 360px;
+}
+
+.widget-mpris,
+.widget-volume,
+.widget-backlight,
+.widget-buttons-grid,
+.control-center-list > box > *:not(.widget-title) {
+  background-color: @module_bg;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border: 1px solid @border_medium;
+}
+
+.widget-title {
+  background: transparent;
+  padding: 4px 4px 10px 4px;
+}
+.widget-title label {
+  font-size: 14px;
+  font-weight: 500;
+  color: @theme_fg_secondary;
+}
+.widget-title button {
+  color: @theme_fg;
+  background-color: @button_bg;
+  border-radius: 10px;
+  padding: 6px 12px;
+}
+.widget-title button:hover {
+  background-color: @button_hover_bg;
+}
+
+.widget-mpris {
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+.widget-mpris .widget-mpris-player {
+  background-color: @mpris_player_bg;
+  border-radius: 16px;
+  border: 1px solid @border_medium;
+  padding: 12px;
+}
+.widget-mpris .widget-mpris-album-art {
+  border-radius: 12px;
+  margin-right: 10px;
+  min-width: 56px;
+  min-height: 56px;
+}
+.widget-mpris .widget-mpris-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+.widget-mpris .widget-mpris-subtitle {
+  font-size: 12px;
+  color: @theme_fg_secondary;
+}
+.widget-mpris .widget-mpris-player button {
+  all: unset;
+  border-radius: 50%;
+  padding: 6px;
+  color: @theme_fg_secondary;
+  min-width: 28px;
+  min-height: 28px;
+}
+.widget-mpris .widget-mpris-player button:hover {
+  background-color: @button_hover_bg;
+  color: @theme_fg;
+}
+
+.widget-volume label,
+.widget-backlight label {
+  font-size: 18px;
+  margin-right: 10px;
+}
+scale trough {
+  min-height: 10px;
+  border-radius: 5px;
+  background-color: @slider_trough_bg;
+}
+scale trough progress {
+  min-height: 10px;
+  border-radius: 5px;
+  background-color: @accent_color;
+}
+scale slider {
+  min-width: 12px;
+  min-height: 12px;
+  border-radius: 6px;
+  background-color: @slider_thumb_bg;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button {
+  background-color: rgba(0, 0, 0, 0.35);
+  border-radius: 999px;
+  padding: 12px;
+  min-width: 22px;
+  min-height: 22px;
+  color: @theme_fg_secondary;
+}
+.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+  background-color: @button_hover_bg;
+  color: @theme_fg;
+}
+.widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked {
+  background-color: @accent_color;
+  color: white;
+}
+
+.control-center .notification-background {
+  background-color: @module_bg;
+  border: 1px solid @border_medium;
+  padding: 12px;
+  border-radius: 14px;
+}
+.control-center .notification .summary {
+  font-weight: 600;
+}
+.control-center .notification .body,
+.control-center .notification .time {
+  color: @theme_fg_secondary;
+  font-size: 12px;
+}
+
+.floating-notifications .notification-background {
+  background-color: @popup_bg;
+  border: 1px solid @border_light;
+  border-radius: 16px;
+  padding: 14px;
+  margin: 6px 10px;
+}
