@@ -1,8 +1,0 @@
-[SddmGreeterTheme]
-Name=osumania
-Description=osu!mania theme
-Author=Darkkal44
-Type=sddm-theme
-MainScript=Main.qml
-ConfigFile=theme.conf
-QtVersion=6
