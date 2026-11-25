@@ -1,3 +1,3 @@
 {
-  "color_hook": "/home/bowser/.config/hypr/scripts/matugen-from-wall.sh {path}"
+  "color_hook": "bash $HOME/.config/hypr/scripts/matugen-from-wall.sh {path}"
 }
