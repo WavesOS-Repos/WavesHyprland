@@ -128,7 +128,6 @@ hl.bind("CTRL + ALT + ESCAPE",
     hl.dsp.exec_cmd("~/.config/hypr/scripts/waybar-reload.sh --reload"))
 
 -- Window switcher
-hl.bind(mainMod .. " + TAB", hl.dsp.exec_cmd("rofi -show window"))
 hl.bind("ALT + TAB",         hl.dsp.exec_cmd("rofi -show window -theme ~/.config/rofi/themes/rofi-window.rasi"))
 
 -- Optional: Pyprland (only if installed)

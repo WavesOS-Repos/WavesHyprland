@@ -41,7 +41,7 @@ if ! matugen image "$WORK" \
       --mode "$MODE" \
       --type scheme-vibrant \
       --contrast 1.0 \
-      --source-color-index 0
+      --source-color-index 1
 then
   echo "matugen-from-wall: retrying simpler matugen invocation..." >&2
   matugen image "$WORK" --mode "$MODE" || {

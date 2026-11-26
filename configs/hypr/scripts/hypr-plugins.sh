@@ -15,38 +15,37 @@ SHOW_BANNER="${SHOW_BANNER:-1}"
 # GitHub /tree/... URLs from the website are normalized to their repository root.
 # "external" entries are listed but are not shared-object plugins managed by hyprpm.
 read -r -d '' BUILTIN_CATALOG <<'CATALOG' || true
-hy3|hy3|https://github.com/outfoxxed/hy3|hy3|hyprpm
+hy3|Hy3|https://github.com/outfoxxed/hy3|hy3|hyprpm
 hyprwinwrap|Hyprwinwrap|https://github.com/gen3vra/hyprwinwrap|hyprwinwrap|hyprpm
-hyprgrass|hyprgrass|https://github.com/horriblename/hyprgrass|hyprgrass|hyprpm
-split-monitor-workspaces|split-monitor-workspaces|https://github.com/Duckonaut/split-monitor-workspaces|split-monitor-workspaces|hyprpm
-hyprland-easymotion|hyprland-easymotion|https://github.com/zakk4223/hyprland-easymotion|hyprEasymotion|hyprpm
-hypr-dynamic-cursors|hypr-dynamic-cursors|https://github.com/VirtCode/hypr-dynamic-cursors|dynamic-cursors|hyprpm
-hypr-edgehover|hypr-edgehover|https://github.com/gfhdhytghd/hypr-edgehover|hypr-edgehover|hyprpm
-hymission|hymission|https://github.com/gfhdhytghd/hymission|hymission|hyprpm
-hyprcapture|hyprcapture|https://github.com/gfhdhytghd/HyprCapture|hyprcapture|hyprpm
-hypr-kinetic-scroll|hypr-kinetic-scroll|https://github.com/savonovv/hypr-kinetic-scroll|hypr-kinetic-scroll|hyprpm
-gloview|gloview|https://github.com/fedsfarm/gloview|gloview|hyprpm
-confined-floats|confined-floats|https://github.com/mennemann/hyprland-confined-floats|confined-floats|hyprpm
-macos-zoom|macos-zoom|https://github.com/aastrand/hyprland-macos-zoom|macos-zoom|hyprpm
-hyprNStack|hyprNStack|https://github.com/zakk4223/hyprNStack|hyprNStack|hyprpm
-hyprland-virtual-desktops|hyprland-virtual-desktops|https://github.com/levnikmyskin/hyprland-virtual-desktops|hyprland-virtual-desktops|hyprpm
-hyprRiver|hyprRiver|https://github.com/zakk4223/hyprRiver|hyprRiver|hyprpm
+hyprgrass|Hyprgrass|https://github.com/horriblename/hyprgrass|hyprgrass|hyprpm
+split-monitor-workspaces|Split Monitor Workspaces|https://github.com/Duckonaut/split-monitor-workspaces|split-monitor-workspaces|hyprpm
+hyprland-easymotion|Hypr Easymotion|https://github.com/zakk4223/hyprland-easymotion|hyprEasymotion|hyprpm
+hypr-dynamic-cursors|Dynamic Cursors|https://github.com/VirtCode/hypr-dynamic-cursors|dynamic-cursors|hyprpm
+hypr-edgehover|Edge Hover|https://github.com/gfhdhytghd/hypr-edgehover|hypr-edgehover|hyprpm
+hymission|Hymission|https://github.com/gfhdhytghd/hymission|hymission|hyprpm
+hyprcapture|HyprCapture|https://github.com/gfhdhytghd/HyprCapture|hyprcapture|hyprpm
+hypr-kinetic-scroll|Kinetic Scroll|https://github.com/savonovv/hypr-kinetic-scroll|hypr-kinetic-scroll|hyprpm
+gloview|GloView|https://github.com/fedsfarm/gloview|gloview|hyprpm
+confined-floats|Confined Floats|https://github.com/mennemann/hyprland-confined-floats|confined-floats|hyprpm
+macos-zoom|macOS Zoom|https://github.com/aastrand/hyprland-macos-zoom|macos-zoom|hyprpm
+hyprNStack|Hypr NStack|https://github.com/zakk4223/hyprNStack|hyprNStack|hyprpm
+hyprland-virtual-desktops|Virtual Desktops|https://github.com/levnikmyskin/hyprland-virtual-desktops|hyprland-virtual-desktops|hyprpm
+hyprRiver|HyprRiver|https://github.com/zakk4223/hyprRiver|hyprRiver|hyprpm
 borders-plus-plus|Borders++|https://github.com/hyprwm/hyprland-plugins|borders-plus-plus|hyprpm
-imgborders|Image borders|https://codeberg.org/zacoons/imgborders|imgborders|hyprpm
+imgborders|Image Borders|https://codeberg.org/zacoons/imgborders|imgborders|hyprpm
 hyprbars|Hyprbars|https://github.com/hyprwm/hyprland-plugins|hyprbars|hyprpm
 hyprtrails|Hyprtrails|https://github.com/hyprwm/hyprland-plugins|hyprtrails|hyprpm
 hyprfocus|Hyprfocus|https://github.com/hyprwm/hyprland-plugins|hyprfocus|hyprpm
-hypr-darkwindow|hypr-darkwindow|https://github.com/micha4w/Hypr-DarkWindow|Hypr-DarkWindow|hyprpm
-hyprexpo-sandwichfarm|sandwichfarm/hyprexpo|https://github.com/sandwichfarm/hyprexpo|hyprexpo|hyprpm
-hyprexpo-colonelpanic8|colonelpanic8/hyprexpo|https://github.com/colonelpanic8/hyprexpo|hyprexpo|hyprpm
-hyprspace|hyprspace|https://github.com/KZDKM/Hyprspace|hyprspace|hyprpm
+hypr-darkwindow|Dark Window|https://github.com/micha4w/Hypr-DarkWindow|Hypr-DarkWindow|hyprpm
+hyprexpo|HyprExpo|https://github.com/sandwichfarm/hyprexpo|hyprexpo|hyprpm
+hyprspace|Hyprspace|https://github.com/KZDKM/Hyprspace|hyprspace|hyprpm
 hyprglass|Hyprglass|https://github.com/hyprnux/hyprglass|hyprglass|hyprpm
-scrolloverview|scrolloverview|https://github.com/yayuuu/hyprland-scroll-overview|scrolloverview|hyprpm
-HyprWindowShade|HyprWindowShade|https://github.com/ManofJELLO/HyprWindowShade|HyprWindowShade|hyprpm
-hyprliquid|hyprliquid|https://github.com/zaregototsukai/hyprliquid|hyprliquid|hyprpm
-pyprland|pyprland|https://github.com/hyprland-community/pyprland||external
+scrolloverview|Scroll Overview|https://github.com/yayuuu/hyprland-scroll-overview|scrolloverview|hyprpm
+HyprWindowShade|Window Shade|https://github.com/ManofJELLO/HyprWindowShade|HyprWindowShade|hyprpm
+hyprliquid|Hyprliquid|https://github.com/zaregototsukai/hyprliquid|hyprliquid|hyprpm
+pyprland|Pyprland|https://github.com/hyprland-community/pyprland||external
 csgo-vulkan-fix|CSGO Vulkan Fix|https://github.com/hyprwm/hyprland-plugins|csgo-vulkan-fix|hyprpm
-hypr-hot-edge|hypr-hot-edge|https://github.com/claychinasky/hypr-hot-edge|hypr-hot-edge|hyprpm
+hypr-hot-edge|Hot Edge|https://github.com/claychinasky/hypr-hot-edge|hypr-hot-edge|hyprpm
 CATALOG
 
 # Use an existing user catalogue if present, otherwise create the current website list.
@@ -244,8 +243,7 @@ run_hyprpm() {
     hyprpm "$@"
 }
 
-# Same plugin ID in multiple catalogue entries (the two hyprexpo forks) cannot
-# be enabled simultaneously. Keep the user's first selected fork and skip the other.
+# Same plugin ID in multiple catalogue entries cannot be enabled simultaneously.
 check_duplicate_selections() {
     local i j p
     SKIP_IDS=()
@@ -255,7 +253,7 @@ check_duplicate_selections() {
         for ((j=i+1; j<${#IDS[@]}; j++)); do
             [[ "${TYPES[$j]}" == external || ${DESIRED[${IDS[$j]}]:-0} != 1 ]] && continue
             if [[ "${PLUGIN_NAMES[$j]}" == "$p" ]]; then
-                warn "${NAMES[$i]} and ${NAMES[$j]} share HyprPM ID '$p'; only one fork can be selected. Skipping ${NAMES[$j]}."
+                warn "${NAMES[$i]} and ${NAMES[$j]} share HyprPM ID '$p'; only one can be selected. Skipping ${NAMES[$j]}."
                 SKIP_IDS["${IDS[$j]}"]=1
             fi
         done
@@ -265,8 +263,7 @@ check_duplicate_selections() {
 install_plugin() {
     local i="$1" p="${PLUGIN_NAMES[$1]}" repo="${REPOS[$1]}" add_ok=0
     info "Preparing ${NAMES[$i]} from $repo"
-    # Add each repository at most once per run. If already registered, HyprPM
-    # may report that; state is re-read before deciding whether this is a failure.
+    # Add each repository at most once per run.
     if [[ ${REPO_SEEN[$repo]:-0} != 1 ]]; then
         REPO_SEEN["$repo"]=1
         run_hyprpm add "$repo" && add_ok=1 || true
@@ -298,7 +295,6 @@ apply_changes() {
         [[ "${TYPES[$i]}" == external || ${SKIP_IDS[${IDS[$i]}]:-0} == 1 ]] && continue
         p="${PLUGIN_NAMES[$i]}"; want="${DESIRED[${IDS[$i]}]:-0}"
         have_installed="${INSTALLED[$p]:-0}"; have_enabled="${ENABLED[$p]:-0}"
-        # A currently loaded plugin is already active; don't issue redundant enable.
         if [[ "$want" == 1 && ( "$have_enabled" == 1 || ${LOADED[$p]:-0} == 1 ) ]]; then continue; fi
         if [[ "$want" == 0 && "$have_enabled" != 1 ]]; then continue; fi
         printf '\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
@@ -338,5 +334,3 @@ main() {
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi
-
-

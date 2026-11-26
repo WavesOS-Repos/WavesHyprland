@@ -651,7 +651,7 @@
 --     },
 -- })
 -- -- Toggle bind from README:
--- hl.bind("SUPER + G", function() hl.plugin.hyprexpo.expo("toggle") end)
+hl.bind("SUPER + SHIFT + TAB", function() hl.plugin.hyprexpo.expo("toggle") end)
 
 -- -----------------------------------------------------------------------------
 -- 20. hyprexpo — colonelpanic8 fork

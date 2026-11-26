@@ -35,6 +35,8 @@
  + Shift + F | Eww widgets
 --------------------------------------------------------
 # Window management
+ALT + TAB | Window Switcher
+ + SHIFT + TAB | Workspace overview
  + V | Toggle floating
  + Alt + V | Toggle floating
  + F | Fullscreen
