@@ -1,8 +1,0 @@
-[SddmGreeterTheme]
-Name=girl-coffee
-Description=just a girl holdin coffee
-Author=Darkkal44
-Type=sddm-theme
-MainScript=Main.qml
-ConfigFile=theme.conf
-QtVersion=6

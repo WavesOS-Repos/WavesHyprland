@@ -10,41 +10,66 @@ RELAX="$SRC/Relax-Plasma-Themes"
 
 mkdir -p "${LOCAL_SHARE}/themes" "${LOCAL_SHARE}/icons" "${LOCAL_SHARE}/color-schemes"
 mkdir -p "${CONFIG_DIR}/Kvantum"
+mkdir -p "${USER_HOME}/.icons" "${USER_HOME}/.themes"
+
+copy_tree() {
+  local from="$1" to="$2"
+  [[ -d "$from" ]] || return 0
+  mkdir -p "$to"
+  if command -v rsync &>/dev/null && rsync --version &>/dev/null 2>&1; then
+    rsync -a "$from"/ "$to"/
+  else
+    warn "rsync unavailable/broken — using cp"
+    cp -a "$from"/. "$to"/
+  fi
+}
 
 GTK_SRC=""
 for cand in "$RELAX/Relax GTK Themes" "$RELAX/Relax GTK Theme"; do
   [[ -d "$cand" ]] && GTK_SRC="$cand" && break
 done
 
-ICON_SRC="$RELAX/Relax Icons Themes"
-[[ -d "$ICON_SRC" ]] || ICON_SRC="$RELAX/Relax Icon Themes"
+ICON_SRC=""
+for cand in "$RELAX/Relax Icons Themes" "$RELAX/Relax Icon Themes"; do
+  [[ -d "$cand" ]] && ICON_SRC="$cand" && break
+done
 
 KV_SRC=""
 for cand in "$RELAX/Relax Kvantum Themes" "$RELAX/Relax Kvantum Theme"; do
   [[ -d "$cand" ]] && KV_SRC="$cand" && break
 done
 
-# --- GTK (rsync OK) ---
+# --- GTK ---
 if [[ -n "$GTK_SRC" ]]; then
-  run_quiet "install GTK themes" rsync -a "$GTK_SRC"/ "${LOCAL_SHARE}/themes/" \
-    || die "GTK theme copy failed from: $GTK_SRC"
+  for d in "$GTK_SRC"/*/; do
+    [[ -d "$d" ]] || continue
+    base="$(basename "$d")"
+    copy_tree "$d" "${LOCAL_SHARE}/themes/${base}"
+    copy_tree "$d" "${USER_HOME}/.themes/${base}"
+  done
+  ok "GTK themes installed"
 else
   warn "GTK themes folder not found under $RELAX"
 fi
 
-# --- Kvantum (rsync OK) ---
+# --- Kvantum ---
 if [[ -n "$KV_SRC" ]]; then
-  run_quiet "install Kvantum themes" rsync -a "$KV_SRC"/ "${CONFIG_DIR}/Kvantum/" \
-    || die "Kvantum copy failed from: $KV_SRC"
+  for d in "$KV_SRC"/*/; do
+    [[ -d "$d" ]] || continue
+    base="$(basename "$d")"
+    copy_tree "$d" "${CONFIG_DIR}/Kvantum/${base}"
+  done
+  ok "Kvantum themes installed"
 else
   warn "Kvantum themes folder not found under $RELAX"
 fi
 
 if [[ -d "$RELAX/Relax Colorschemes" ]]; then
-  find "$RELAX/Relax Colorschemes" -type f -name '*.colors' -exec cp -a {} "${LOCAL_SHARE}/color-schemes/" \; 2>/dev/null || true
+  find "$RELAX/Relax Colorschemes" -type f -name '*.colors' \
+    -exec cp -a {} "${LOCAL_SHARE}/color-schemes/" \; 2>/dev/null || true
 fi
 
-# --- Apply Kvantum / GTK / gsettings (dark) FIRST ---
+# Default Kvantum + GTK (dark)
 printf '%s\n' '[General]' 'theme=Relax-Kvantum' > "${CONFIG_DIR}/Kvantum/kvantum.kvconfig"
 command -v kvantummanager &>/dev/null && kvantummanager --set Relax-Kvantum >/dev/null 2>&1 || true
 
@@ -72,35 +97,26 @@ if command -v gsettings &>/dev/null; then
   gsettings set org.gnome.desktop.interface color-scheme prefer-dark >/dev/null 2>&1 || true
 fi
 
-# --- Icons LAST: remove packs, then cp -a (no rsync) ---
-[[ -d "$ICON_SRC" ]] || die "Icon themes folder not found: $ICON_SRC"
-
-mkdir -p "${LOCAL_SHARE}/icons"
-
-rm -rf \
-  "${LOCAL_SHARE}/icons/Relax-Light-Icons" \
-  "${LOCAL_SHARE}/icons/Relax-Dark-Icons"
-
-# Copy every pack from "Relax Icons Themes"/* → ~/.local/share/icons/
-shopt -s nullglob
-for d in "$ICON_SRC"/*/; do
-  name="$(basename "$d")"
-  if ! cp -a "$d" "${LOCAL_SHARE}/icons/${name}"; then
-    die "Failed to copy icon pack: $d → ${LOCAL_SHARE}/icons/${name}"
-  fi
-done
-shopt -u nullglob
-
-# Also wipe incomplete ~/.icons copies of the same packs (optional cleanup)
-rm -rf \
-  "${USER_HOME}/.icons/Relax-Light-Icons" \
-  "${USER_HOME}/.icons/Relax-Dark-Icons"
-
-if [[ -n "${SUDO_USER:-}" && "$(id -u)" -eq 0 ]]; then
-  chown -R "${SUDO_USER}:" "${LOCAL_SHARE}/icons" 2>/dev/null || true
+# --- Icons LAST: remove then copy ---
+if [[ -n "$ICON_SRC" ]]; then
+  rm -rf "${LOCAL_SHARE}/icons/Relax-Dark-Icons" "${LOCAL_SHARE}/icons/Relax-Light-Icons" 2>/dev/null || true
+  rm -rf "${USER_HOME}/.icons/Relax-Dark-Icons" "${USER_HOME}/.icons/Relax-Light-Icons" 2>/dev/null || true
+  for d in "$ICON_SRC"/*/; do
+    [[ -d "$d" ]] || continue
+    base="$(basename "$d")"
+    copy_tree "$d" "${LOCAL_SHARE}/icons/${base}"
+    copy_tree "$d" "${USER_HOME}/.icons/${base}"
+  done
+  ok "Icon packs installed"
+else
+  warn "Icon themes folder not found under $RELAX"
 fi
 
-# Re-assert icon theme after copy
-if command -v gsettings &>/dev/null; then
-  gsettings set org.gnome.desktop.interface icon-theme "Relax-Dark-Icons" >/dev/null 2>&1 || true
+if [[ -n "${SUDO_USER:-}" ]]; then
+  chown -R "${SUDO_USER}:${SUDO_USER}" \
+    "${LOCAL_SHARE}/themes" "${LOCAL_SHARE}/icons" \
+    "${USER_HOME}/.themes" "${USER_HOME}/.icons" \
+    "${CONFIG_DIR}/Kvantum" 2>/dev/null || true
 fi
+
+ok "Theme install finished"
