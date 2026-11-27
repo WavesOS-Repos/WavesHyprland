@@ -1,0 +1,3 @@
+# chord	label	note
+CTRL+U	System updater	systemupdate.sh
+SUPER+SHIFT+P	Plugin manager	hypr-plugins.sh

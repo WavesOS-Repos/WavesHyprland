@@ -1,0 +1,3 @@
+# Paths relative to ~/.config — removed on safe update only if still stock
+# example:
+# hypr/scripts/old-script.sh

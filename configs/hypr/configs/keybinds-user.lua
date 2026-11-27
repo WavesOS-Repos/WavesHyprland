@@ -1,0 +1,2 @@
+-- User keybinds (never overwritten by rice update / safe mode)
+-- Loaded after keybinds-stock.lua — your binds win on conflicts
